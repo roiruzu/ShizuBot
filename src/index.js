@@ -5,22 +5,21 @@ const {
     GatewayIntentBits,
     Partials,
     Collection,
-    MessageFlags,
-    EmbedBuilder
+    EmbedBuilder,
+    MessageFlags
 } = require("discord.js");
 
 const fs = require("fs");
 const path = require("path");
 
-const logger =
-    require("./utils/logger");
+// ===============================
+// UTILS
+// ===============================
 
-const database =
-    require("./utils/database");
-
+const logger = require("./utils/logger");
+const database = require("./utils/database");
 const {
-    getOrCreateLogChannel,
-    sendLog
+    getOrCreateLogChannel
 } = require("./utils/logChannel");
 
 const {
@@ -37,95 +36,59 @@ const {
 
 const {
     handleMessageXP,
-    handleVoiceXP
+    handleVoiceXP,
+    getRankInfo
 } = require("./utils/levelingManager");
 
-// ============================================================
+const {
+    getUserRank,
+    getLeaderboard
+} = require("./utils/levelingStore");
+
+// ===============================
 // CLIENT
-// ============================================================
+// ===============================
 
 const client = new Client({
-
     intents: [
-
         GatewayIntentBits.Guilds,
-
         GatewayIntentBits.GuildMembers,
-
         GatewayIntentBits.GuildMessages,
-
         GatewayIntentBits.MessageContent,
-
-        GatewayIntentBits.GuildPresences
-
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.GuildVoiceStates
     ],
 
     partials: [
-
         Partials.Channel,
-
         Partials.Message,
-
         Partials.GuildMember,
-
         Partials.User
-
     ]
 });
 
-// ============================================================
+// ===============================
 // COMMANDS
-// ============================================================
+// ===============================
 
-client.commands =
-    new Collection();
+client.commands = new Collection();
 
-const commandsPath =
-    path.join(
-        __dirname,
-        "commands"
-    );
+const commandsPath = path.join(__dirname, "commands");
 
-if (
-    fs.existsSync(
-        commandsPath
-    )
-) {
+if (fs.existsSync(commandsPath)) {
+    const commandFiles = fs
+        .readdirSync(commandsPath)
+        .filter(file => file.endsWith(".js"));
 
-    const commandFiles =
-        fs.readdirSync(
-            commandsPath
-        )
-        .filter(
-            file =>
-                file.endsWith(".js")
-        );
-
-    for (
-        const file
-        of commandFiles
-    ) {
-
+    for (const file of commandFiles) {
         try {
+            const filePath = path.join(commandsPath, file);
+            const command = require(filePath);
 
-            const filePath =
-                path.join(
-                    commandsPath,
-                    file
-                );
-
-            const command =
-                require(filePath);
-
-            if (
-                !command.data ||
-                !command.execute
-            ) {
-
+            if (!command.data || !command.execute) {
                 logger.warn(
-                    `Geçersiz komut dosyası: ${file}`
+                    `${file} geçersiz command dosyası.`
                 );
-
                 continue;
             }
 
@@ -135,277 +98,188 @@ if (
             );
 
             logger.info(
-                `Komut yüklendi: /${command.data.name}`
+                `Command yüklendi: /${command.data.name}`
             );
 
         } catch (error) {
-
             logger.error(
-                `Komut yüklenemedi: ${file} | ${error.message}`
+                `${file} yüklenemedi: ${error.message}`
             );
         }
     }
 }
 
 logger.info(
-    `Toplam ${client.commands.size} komut yüklendi.`
+    `Toplam ${client.commands.size} slash command yüklendi.`
 );
 
-// ============================================================
+// ===============================
 // READY
-// ============================================================
+// ===============================
 
-client.once(
-    "clientReady",
-    async readyClient => {
+client.once("clientReady", async () => {
+    try {
+        logger.success(
+            `Shizu giriş yaptı: ${client.user.tag}`
+        );
 
-        try {
+        logger.info(
+            `Sunucu sayısı: ${client.guilds.cache.size}`
+        );
 
-            logger.success(
-                `${readyClient.user.tag} olarak Discord'a bağlanıldı.`
-            );
-
-            logger.info(
-                `Bot ID: ${readyClient.user.id}`
-            );
-
-            logger.info(
-                `Sunucu sayısı: ${readyClient.guilds.cache.size}`
-            );
-
-            readyClient.user.setPresence({
-
-                activities: [
-                    {
-                        name:
-                            "Shizu • /rank",
-                        type: 3
-                    }
-                ],
-
-                status:
-                    "online"
-            });
-
-            // =================================================
-            // SUNUCULAR
-            // =================================================
-
-            for (
-                const guild
-                of readyClient.guilds.cache.values()
-            ) {
-
-                try {
-
-                    await database.loadGuild(
-                        guild.id
-                    );
-
-                    await getOrCreateLogChannel(
-                        guild
-                    );
-
-                    logger.info(
-                        `Sunucu hazır: ${guild.name} (${guild.id})`
-                    );
-
-                } catch (error) {
-
-                    logger.error(
-                        `Sunucu başlatılamadı: ${guild.name} | ${error.message}`
-                    );
+        client.user.setPresence({
+            activities: [
+                {
+                    name: "Shizu • /rank",
+                    type: 0
                 }
-            }
+            ],
+            status: "online"
+        });
 
-            logger.success(
-                "Shizu başarıyla hazır."
-            );
-
-        } catch (error) {
-
-            logger.error(
-                `Ready hatası: ${error.message}`
-            );
-        }
-    }
-);
-
-// ============================================================
-// INTERACTIONS
-// ============================================================
-
-client.on(
-    "interactionCreate",
-    async interaction => {
-
-        try {
-
-            // =================================================
-            // BUTTON
-            // =================================================
-
-            if (
-                interaction.isButton()
-            ) {
-
-                try {
-
-                    const handled =
-                        await handleTicketButton(
-                            interaction
-                        );
-
-                    if (handled) {
-                        return;
-                    }
-
-                } catch (error) {
-
-                    logger.error(
-                        `Ticket buton hatası: ${error.message}`
-                    );
-
-                    if (
-                        !interaction.replied &&
-                        !interaction.deferred
-                    ) {
-
-                        await interaction.reply({
-
-                            content:
-                                "❌ İşlem sırasında bir hata oluştu.",
-
-                            flags:
-                                MessageFlags.Ephemeral
-
-                        }).catch(() => {});
-                    }
-                }
-
-                return;
-            }
-
-            // =================================================
-            // SLASH COMMAND
-            // =================================================
-
-            if (
-                !interaction.isChatInputCommand()
-            ) {
-                return;
-            }
-
-            const command =
-                client.commands.get(
-                    interaction.commandName
-                );
-
-            if (!command) {
-
-                logger.warn(
-                    `Bilinmeyen command: /${interaction.commandName}`
-                );
-
-                if (
-                    !interaction.replied &&
-                    !interaction.deferred
-                ) {
-
-                    await interaction.reply({
-
-                        content:
-                            "❌ Bu komut mevcut değil.",
-
-                        flags:
-                            MessageFlags.Ephemeral
-
-                    }).catch(() => {});
-                }
-
-                return;
-            }
-
-            logger.info(
-                `Komut: /${interaction.commandName} | ` +
-                `Kullanıcı: ${interaction.user.tag} | ` +
-                `Sunucu: ${interaction.guild?.name || "DM"}`
-            );
-
+        // Sunucuları başlat
+        for (const guild of client.guilds.cache.values()) {
             try {
+                await database.loadGuild(guild.id);
 
-                await command.execute(
-                    interaction
+                await getOrCreateLogChannel(guild);
+
+                logger.info(
+                    `Sunucu hazır: ${guild.name}`
                 );
 
             } catch (error) {
-
-                await handleCommandError(
-                    interaction,
-                    error,
-                    interaction.commandName
+                logger.error(
+                    `${guild.name} başlatılırken hata: ${error.message}`
                 );
             }
+        }
+
+        logger.success(
+            "Shizu tamamen hazır!"
+        );
+
+    } catch (error) {
+        logger.error(
+            `Ready hatası: ${error.message}`
+        );
+    }
+});
+
+// ===============================
+// INTERACTIONS
+// ===============================
+
+client.on("interactionCreate", async interaction => {
+
+    // ===========================
+    // TICKET BUTTON
+    // ===========================
+
+    if (interaction.isButton()) {
+        try {
+            const handled =
+                await handleTicketButton(interaction);
+
+            if (handled) return;
 
         } catch (error) {
-
             logger.error(
-                `Interaction hatası: ${error.message}`
+                `Ticket button hatası: ${error.message}`
+            );
+
+            if (!interaction.replied && !interaction.deferred) {
+                try {
+                    await interaction.reply({
+                        content:
+                            "❌ Ticket işlemi sırasında bir hata oluştu.",
+                        flags: MessageFlags.Ephemeral
+                    });
+                } catch {}
+            }
+        }
+
+        return;
+    }
+
+    // ===========================
+    // SLASH COMMAND
+    // ===========================
+
+    if (!interaction.isChatInputCommand()) {
+        return;
+    }
+
+    const command =
+        client.commands.get(
+            interaction.commandName
+        );
+
+    if (!command) {
+        logger.warn(
+            `Bilinmeyen command kullanıldı: /${interaction.commandName}`
+        );
+
+        return;
+    }
+
+    try {
+
+        await command.execute(
+            interaction,
+            client
+        );
+
+        logger.info(
+            `${interaction.user.tag} → /${interaction.commandName}`
+        );
+
+    } catch (error) {
+
+        logger.error(
+            `/ ${interaction.commandName} hatası: ${error.stack || error.message}`
+        );
+
+        try {
+            await handleCommandError(
+                interaction,
+                error
+            );
+        } catch (handlerError) {
+            logger.error(
+                `Command error handler hatası: ${handlerError.message}`
             );
         }
     }
-);
+});
 
-// ============================================================
+// ===============================
 // MESSAGE CREATE
-// ============================================================
+// ===============================
 
-client.on(
-    "messageCreate",
-    async message => {
+client.on("messageCreate", async message => {
 
-        try {
+    if (!message.guild) return;
+    if (message.author.bot) return;
 
-            if (!message.guild) {
-                return;
-            }
+    try {
 
-            if (message.author.bot) {
-                return;
-            }
+        // ===========================
+        // PREFIX RANK
+        // ===========================
 
-            // =================================================
-            // RANK PREFIX COMMAND
-            // =================================================
+        if (
+            message.content.toLowerCase().trim() ===
+            "!rank"
+        ) {
+            try {
 
-            if (
-                message.content
-                    .trim()
-                    .toLowerCase() ===
-                "!rank"
-            ) {
+                const info = getRankInfo(
+                    message.guild.id,
+                    message.author.id
+                );
 
-                const {
-                    getRankInfo
-                } =
-                    require(
-                        "./utils/levelingManager"
-                    );
-
-                const {
-                    getUserRank
-                } =
-                    require(
-                        "./utils/levelingStore"
-                    );
-
-                const info =
-                    getRankInfo(
-                        message.guild.id,
-                        message.author.id
-                    );
-
-                const position =
+                const rank =
                     getUserRank(
                         message.guild.id,
                         message.author.id
@@ -413,132 +287,117 @@ client.on(
 
                 const progress =
                     Math.min(
-                        Math.floor(
-                            (
-                                info.xpInLevel /
-                                info.xpNeeded
-                            ) * 100
-                        ),
-                        100
+                        10,
+                        Math.max(
+                            0,
+                            Math.floor(
+                                (
+                                    info.xpInLevel /
+                                    Math.max(
+                                        1,
+                                        info.nextLevelXP -
+                                        info.currentLevelXP
+                                    )
+                                ) * 10
+                            )
+                        )
                     );
 
-                const filled =
-                    Math.round(
-                        (
-                            progress /
-                            100
-                        ) * 10
-                    );
+                const progressBar =
+                    "🟦".repeat(progress) +
+                    "⬛".repeat(10 - progress);
 
-                const bar =
-                    "█".repeat(filled) +
-                    "░".repeat(
-                        10 - filled
-                    );
-
-                const embed =
-                    new EmbedBuilder()
-                        .setTitle(
-                            `📊 ${message.author.username}`
-                        )
-                        .setThumbnail(
-                            message.author.displayAvatarURL({
-                                size: 256
-                            })
-                        )
-                        .setColor(
-                            0x5865F2
-                        )
-                        .addFields(
-
-                            {
-                                name:
-                                    "🏆 Level",
-                                value:
-                                    `**${info.level}**`,
-                                inline:
-                                    true
-                            },
-
-                            {
-                                name:
-                                    "⭐ XP",
-                                value:
-                                    `**${info.xp} XP**`,
-                                inline:
-                                    true
-                            },
-
-                            {
-                                name:
-                                    "🥇 Sıralama",
-                                value:
-                                    `**#${position || "?"}**`,
-                                inline:
-                                    true
-                            },
-
-                            {
-                                name:
-                                    "📈 İlerleme",
-                                value:
-                                    `${bar} **${progress}%**\n` +
-                                    `${info.xpInLevel} / ${info.xpNeeded} XP`,
-                                inline:
-                                    false
-                            }
-                        )
-                        .setFooter({
-                            text:
-                                "Shizu XP Sistemi"
+                const embed = new EmbedBuilder()
+                    .setColor(0x5865F2)
+                    .setTitle(`📊 ${message.author.username}`)
+                    .setThumbnail(
+                        message.author.displayAvatarURL({
+                            size: 256
                         })
-                        .setTimestamp();
+                    )
+                    .addFields(
+                        {
+                            name: "🏆 Level",
+                            value: `${info.level}`,
+                            inline: true
+                        },
+                        {
+                            name: "✨ XP",
+                            value: `${info.xp}`,
+                            inline: true
+                        },
+                        {
+                            name: "🥇 Sıralama",
+                            value: rank
+                                ? `#${rank}`
+                                : "Unranked",
+                            inline: true
+                        },
+                        {
+                            name: "📈 İlerleme",
+                            value:
+                                `${progressBar}\n` +
+                                `${info.xpInLevel} / ` +
+                                `${info.nextLevelXP - info.currentLevelXP} XP`,
+                            inline: false
+                        },
+                        {
+                            name: "💬 Mesaj",
+                            value:
+                                `${info.totalMessages || 0}`,
+                            inline: true
+                        },
+                        {
+                            name: "🎙️ Voice",
+                            value:
+                                `${info.voiceMinutes || 0} dakika`,
+                            inline: true
+                        }
+                    )
+                    .setTimestamp();
 
                 await message.reply({
                     embeds: [embed]
                 });
 
-                return;
+            } catch (error) {
+                logger.error(
+                    `!rank hatası: ${error.message}`
+                );
             }
 
-            // =================================================
-            // LEADERBOARD PREFIX COMMAND
-            // =================================================
+            return;
+        }
 
-            const prefixCommand =
-                message.content
-                    .trim()
-                    .toLowerCase();
+        // ===========================
+        // PREFIX TOP
+        // ===========================
 
-            if (
-                prefixCommand === "!top" ||
-                prefixCommand === "!leaderboard"
-            ) {
+        const prefixContent =
+            message.content
+                .toLowerCase()
+                .trim();
 
-                const {
-                    getLeaderboard
-                } =
-                    require(
-                        "./utils/levelingStore"
-                    );
+        if (
+            prefixContent === "!top" ||
+            prefixContent === "!leaderboard"
+        ) {
+            try {
 
                 const leaderboard =
                     getLeaderboard(
                         message.guild.id
                     ).slice(0, 10);
 
-                if (
-                    !leaderboard.length
-                ) {
-
+                if (!leaderboard.length) {
                     await message.reply(
-                        "📊 Henüz XP kazanan kimse yok."
+                        "📊 Henüz XP sıralamasında kimse yok."
                     );
 
                     return;
                 }
 
-                const lines = [];
+                let description = "";
 
                 for (
                     let i = 0;
@@ -546,126 +405,93 @@ client.on(
                     i++
                 ) {
 
-                    const data =
+                    const user =
                         leaderboard[i];
 
                     const member =
                         await message.guild.members
-                            .fetch(
-                                data.userId
-                            )
-                            .catch(
-                                () => null
-                            );
+                            .fetch(user.userId)
+                            .catch(() => null);
 
                     const username =
-                        member?.user.username ||
-                        "Bilinmeyen Kullanıcı";
+                        member?.user?.username ||
+                        `Bilinmeyen Kullanıcı`;
 
                     let medal;
 
-                    if (i === 0) {
-                        medal = "🥇";
-                    } else if (i === 1) {
-                        medal = "🥈";
-                    } else if (i === 2) {
-                        medal = "🥉";
-                    } else {
-                        medal =
-                            `**${i + 1}.**`;
-                    }
+                    if (i === 0) medal = "🥇";
+                    else if (i === 1) medal = "🥈";
+                    else if (i === 2) medal = "🥉";
+                    else medal = `**${i + 1}.**`;
 
-                    lines.push(
+                    description +=
                         `${medal} **${username}** — ` +
-                        `Level ${data.level} • ` +
-                        `${data.xp} XP`
-                    );
+                        `Level ${user.level} • ` +
+                        `${user.xp} XP\n`;
                 }
 
-                await message.reply(
-                    "🏆 **Shizu XP Liderlik Tablosu**\n\n" +
-                    lines.join("\n")
-                );
+                const embed = new EmbedBuilder()
+                    .setColor(0x5865F2)
+                    .setTitle("🏆 Shizu XP Leaderboard")
+                    .setDescription(description)
+                    .setTimestamp();
 
-                return;
-            }
+                await message.reply({
+                    embeds: [embed]
+                });
 
-            // =================================================
-            // MESSAGE XP
-            // =================================================
-
-            await handleMessageXP(
-                message
-            );
-
-            // =================================================
-            // PROFANITY FILTER
-            // =================================================
-
-            if (
-                !containsProfanity(
-                    message.content
-                )
-            ) {
-                return;
-            }
-
-            const originalMessage =
-                message.content ||
-                "(mesaj içeriği yok)";
-
-            const username =
-                message.author.tag ||
-                message.author.username;
-
-            const channelName =
-                message.channel?.name ||
-                "bilinmeyen-kanal";
-
-            // =================================================
-            // DELETE
-            // =================================================
-
-            const deleted =
-                await message.delete()
-                    .catch(
-                        () => null
-                    );
-
-            // =================================================
-            // WARNING
-            // =================================================
-
-            const warning =
-                await message.channel.send({
-
-                    content:
-                        `⚠️ ${message.author}, lütfen bu sunucuda küfür kullanma.`
-
-                }).catch(
-                    () => null
-                );
-
-            if (warning) {
-
-                setTimeout(
-                    () => {
-
-                        warning
-                            .delete()
-                            .catch(
-                                () => {}
-                            );
-
-                    },
-                    5000
+            } catch (error) {
+                logger.error(
+                    `!top hatası: ${error.message}`
                 );
             }
 
-            // =================================================
-            // DISCORD LOG
-            // =================================================
+            return;
+        }
 
+        // ===========================
+        // KÜFÜR FİLTRESİ
+        // ===========================
+
+        if (containsProfanity(message.content)) {
+
+            const originalContent =
+                message.content;
+
+            let deleted = false;
+
+            try {
+                await message.delete();
+                deleted = true;
+            } catch (error) {
+                logger.warn(
+                    `Küfürlü mesaj silinemedi: ${error.message}`
+                );
+            }
+
+            // Uyarı
+            try {
+
+                const warning =
+                    await message.channel.send({
+                        content:
+                            `⚠️ ${message.author}, ` +
+                            `lütfen küfür kullanma.`
+                    });
+
+                setTimeout(async () => {
+                    try {
+                        await warning.delete();
+                    } catch {}
+                }, 5000);
+
+            } catch (error) {
+                logger.warn(
+                    `Küfür uyarısı gönderilemedi: ${error.message}`
+                );
+            }
+
+            // Log
             try {
 
                 const logChannel =
@@ -675,369 +501,324 @@ client.on(
 
                 if (logChannel) {
 
-                    let displayMessage =
-                        originalMessage;
-
-                    if (
-                        displayMessage.length >
-                        1000
-                    ) {
-
-                        displayMessage =
-                            displayMessage.slice(
-                                0,
-                                997
-                            ) + "...";
-                    }
+                    const safeContent =
+                        originalContent.length > 1000
+                            ? originalContent.slice(0, 997) + "..."
+                            : originalContent;
 
                     const embed =
                         new EmbedBuilder()
-                            .setTitle(
-                                "🚨 Küfür Filtresi"
-                            )
-                            .setColor(
-                                0xED4245
-                            )
-                            .setDescription(
-                                `**${message.author}** tarafından küfür içeren bir mesaj algılandı.`
-                            )
+                            .setColor(0xED4245)
+                            .setTitle("🚨 Küfür Filtresi")
                             .addFields(
-
                                 {
-                                    name:
-                                        "👤 Kullanıcı",
+                                    name: "👤 Kullanıcı",
                                     value:
                                         `${message.author}\n` +
-                                        `\`${username}\``,
-                                    inline:
-                                        true
+                                        `${message.author.tag}`,
+                                    inline: true
                                 },
-
                                 {
-                                    name:
-                                        "🆔 Kullanıcı ID",
+                                    name: "🆔 ID",
                                     value:
-                                        `\`${message.author.id}\``,
-                                    inline:
-                                        true
+                                        message.author.id,
+                                    inline: true
                                 },
-
                                 {
-                                    name:
-                                        "📍 Kanal",
+                                    name: "📍 Kanal",
                                     value:
                                         `${message.channel}`,
-                                    inline:
-                                        true
+                                    inline: true
                                 },
-
                                 {
-                                    name:
-                                        "💬 Mesaj",
+                                    name: "💬 Mesaj",
                                     value:
-                                        `\`\`\`\n${displayMessage}\n\`\`\``,
-                                    inline:
-                                        false
+                                        `\`\`\`\n${safeContent}\n\`\`\``,
+                                    inline: false
                                 },
-
                                 {
-                                    name:
-                                        "🗑️ Durum",
+                                    name: "🗑️ Silindi",
                                     value:
                                         deleted
-                                            ? "✅ Mesaj silindi"
-                                            : "❌ Mesaj silinemedi",
-                                    inline:
-                                        true
-                                },
-
-                                {
-                                    name:
-                                        "⚠️ İşlem",
-                                    value:
-                                        "Kullanıcı uyarıldı.",
-                                    inline:
-                                        true
+                                            ? "Evet"
+                                            : "Hayır",
+                                    inline: true
                                 }
                             )
-                            .setThumbnail(
-                                message.author.displayAvatarURL({
-                                    size: 128
-                                })
-                            )
-                            .setFooter({
-                                text:
-                                    `Shizu • Küfür Filtresi | ${message.guild.name}`
-                            })
                             .setTimestamp();
 
                     await logChannel.send({
                         embeds: [embed]
-                    }).catch(
-                        error => {
-
-                            logger.error(
-                                `Küfür logu gönderilemedi: ${error.message}`
-                            );
-                        }
-                    );
+                    });
                 }
 
             } catch (error) {
-
                 logger.error(
-                    `Küfür log sistemi hatası: ${error.message}`
+                    `Küfür log hatası: ${error.message}`
                 );
             }
-
-            // =================================================
-            // FILE LOG
-            // =================================================
 
             logger.warn(
-                `KÜFÜR FİLTRESİ | ` +
-                `Kullanıcı: ${username} | ` +
-                `ID: ${message.author.id} | ` +
-                `Sunucu: ${message.guild.name} | ` +
-                `Kanal: #${channelName} | ` +
-                `Mesaj: ${originalMessage}`
+                `Küfür tespit edildi: ${message.author.tag} → ${originalContent}`
             );
 
-        } catch (error) {
-
-            logger.error(
-                `messageCreate hatası: ${error.message}`
-            );
+            // Küfürlü mesaja XP verme
+            return;
         }
-    }
-);
 
-// ============================================================
-// VOICE XP TIMER
-// ============================================================
-
-setInterval(
-    async () => {
+        // ===========================
+        // MESSAGE XP
+        // ===========================
 
         try {
-
-            await handleVoiceXP(
-                client
-            );
-
+            await handleMessageXP(message);
         } catch (error) {
-
             logger.error(
-                `Voice XP hatası: ${error.message}`
+                `Message XP hatası: ${error.message}`
             );
         }
 
-    },
-    60 * 1000
-);
-
-// ============================================================
-// MEMBER JOIN
-// ============================================================
-
-client.on(
-    "guildMemberAdd",
-    async member => {
-
-        try {
-
-            logger.info(
-                `Üye katıldı: ${member.user.tag} | ${member.guild.name}`
-            );
-
-            await database.loadGuild(
-                member.guild.id
-            );
-
-            await sendLog(
-                member.guild,
-                "👋 Yeni Üye Katıldı",
-                `**${member.user.tag}** sunucuya katıldı.`,
-                0x57F287
-            );
-
-            let guildData;
-
-            try {
-
-                guildData =
-                    await database.loadGuild(
-                        member.guild.id
-                    );
-
-            } catch {
-
-                guildData =
-                    null;
-            }
-
-            if (
-                !guildData ||
-                !guildData.welcome ||
-                !guildData.welcome.enabled
-            ) {
-                return;
-            }
-
-            const channelId =
-                guildData.welcome.channelId;
-
-            if (!channelId) {
-                return;
-            }
-
-            const welcomeChannel =
-                member.guild.channels.cache.get(
-                    channelId
-                );
-
-            if (!welcomeChannel) {
-                return;
-            }
-
-            const welcomeMessage =
-                guildData.welcome.message ||
-                `👋 Hoş geldin ${member}!`;
-
-            const formattedMessage =
-                welcomeMessage
-                    .replace(
-                        /\{user\}/gi,
-                        `${member}`
-                    )
-                    .replace(
-                        /\{username\}/gi,
-                        member.user.username
-                    )
-                    .replace(
-                        /\{server\}/gi,
-                        member.guild.name
-                    );
-
-            await welcomeChannel.send({
-                content:
-                    formattedMessage
-            }).catch(
-                () => {}
-            );
-
-        } catch (error) {
-
-            logger.error(
-                `guildMemberAdd hatası: ${error.message}`
-            );
-        }
-    }
-);
-
-// ============================================================
-// MEMBER LEAVE
-// ============================================================
-
-client.on(
-    "guildMemberRemove",
-    async member => {
-
-        try {
-
-            logger.info(
-                `Üye ayrıldı: ${member.user.tag} | ${member.guild.name}`
-            );
-
-            await sendLog(
-                member.guild,
-                "👋 Üye Ayrıldı",
-                `**${member.user.tag}** sunucudan ayrıldı.`,
-                0xED4245
-            );
-
-        } catch (error) {
-
-            logger.error(
-                `guildMemberRemove hatası: ${error.message}`
-            );
-        }
-    }
-);
-
-// ============================================================
-// MESSAGE DELETE
-// ============================================================
-
-client.on(
-    "messageDelete",
-    async message => {
-
-        try {
-
-            if (!message.guild) {
-                return;
-            }
-
-            if (
-                message.author?.bot
-            ) {
-                return;
-            }
-
-            if (!message.content) {
-                return;
-            }
-
-            await sendLog(
-                message.guild,
-                "🗑️ Mesaj Silindi",
-                `**${message.author?.tag || "Bilinmeyen kullanıcı"}** tarafından gönderilen mesaj silindi.\n\n` +
-                `**Kanal:** ${message.channel}\n` +
-                `**Mesaj:** ${message.content.slice(0, 1000)}`,
-                0xFEE75C
-            );
-
-        } catch (error) {
-
-            logger.error(
-                `messageDelete hatası: ${error.message}`
-            );
-        }
-    }
-);
-
-// ============================================================
-// CLIENT ERROR
-// ============================================================
-
-client.on(
-    "error",
-    error => {
+    } catch (error) {
 
         logger.error(
-            `Discord Client Error: ${error.message}`
+            `messageCreate hatası: ${error.stack || error.message}`
         );
     }
-);
+});
 
-// ============================================================
-// CLIENT WARNING
-// ============================================================
+// ===============================
+// VOICE XP
+// ===============================
 
-client.on(
-    "warn",
-    warning => {
+setInterval(async () => {
 
-        logger.warn(
-            `Discord Client Warning: ${warning}`
+    try {
+
+        await handleVoiceXP(client);
+
+    } catch (error) {
+
+        logger.error(
+            `Voice XP hatası: ${error.message}`
         );
     }
-);
 
-// ============================================================
+}, 60 * 1000);
+
+// ===============================
+// MEMBER JOIN
+// ===============================
+
+client.on("guildMemberAdd", async member => {
+
+    try {
+
+        logger.info(
+            `${member.user.tag} sunucuya katıldı: ${member.guild.name}`
+        );
+
+        const logChannel =
+            await getOrCreateLogChannel(
+                member.guild
+            );
+
+        if (logChannel) {
+
+            const embed =
+                new EmbedBuilder()
+                    .setColor(0x57F287)
+                    .setTitle("📥 Yeni Üye")
+                    .setDescription(
+                        `${member} sunucuya katıldı.`
+                    )
+                    .addFields(
+                        {
+                            name: "👤 Kullanıcı",
+                            value:
+                                `${member.user.tag}`,
+                            inline: true
+                        },
+                        {
+                            name: "🆔 ID",
+                            value:
+                                member.id,
+                            inline: true
+                        },
+                        {
+                            name: "📅 Hesap",
+                            value:
+                                `<t:${Math.floor(
+                                    member.user.createdTimestamp / 1000
+                                )}:R>`,
+                            inline: true
+                        }
+                    )
+                    .setThumbnail(
+                        member.user.displayAvatarURL({
+                            size: 256
+                        })
+                    )
+                    .setTimestamp();
+
+            await logChannel.send({
+                embeds: [embed]
+            });
+        }
+
+    } catch (error) {
+
+        logger.error(
+            `guildMemberAdd hatası: ${error.message}`
+        );
+    }
+});
+
+// ===============================
+// MEMBER LEAVE
+// ===============================
+
+client.on("guildMemberRemove", async member => {
+
+    try {
+
+        logger.info(
+            `${member.user.tag} sunucudan ayrıldı: ${member.guild.name}`
+        );
+
+        const logChannel =
+            await getOrCreateLogChannel(
+                member.guild
+            );
+
+        if (logChannel) {
+
+            const embed =
+                new EmbedBuilder()
+                    .setColor(0xED4245)
+                    .setTitle("📤 Üye Ayrıldı")
+                    .setDescription(
+                        `${member.user.tag} sunucudan ayrıldı.`
+                    )
+                    .addFields(
+                        {
+                            name: "👤 Kullanıcı",
+                            value:
+                                `${member.user.tag}`,
+                            inline: true
+                        },
+                        {
+                            name: "🆔 ID",
+                            value:
+                                member.id,
+                            inline: true
+                        }
+                    )
+                    .setTimestamp();
+
+            await logChannel.send({
+                embeds: [embed]
+            });
+        }
+
+    } catch (error) {
+
+        logger.error(
+            `guildMemberRemove hatası: ${error.message}`
+        );
+    }
+});
+
+// ===============================
+// MESSAGE DELETE LOG
+// ===============================
+
+client.on("messageDelete", async message => {
+
+    try {
+
+        if (!message.guild) return;
+        if (message.author?.bot) return;
+
+        const logChannel =
+            await getOrCreateLogChannel(
+                message.guild
+            );
+
+        if (!logChannel) return;
+
+        const content =
+            message.content || "Mesaj içeriği alınamadı.";
+
+        const safeContent =
+            content.length > 1000
+                ? content.slice(0, 997) + "..."
+                : content;
+
+        const embed =
+            new EmbedBuilder()
+                .setColor(0xFEE75C)
+                .setTitle("🗑️ Mesaj Silindi")
+                .addFields(
+                    {
+                        name: "👤 Kullanıcı",
+                        value:
+                            message.author
+                                ? `${message.author.tag}`
+                                : "Bilinmiyor",
+                        inline: true
+                    },
+                    {
+                        name: "📍 Kanal",
+                        value:
+                            `${message.channel}`,
+                        inline: true
+                    },
+                    {
+                        name: "💬 Mesaj",
+                        value:
+                            `\`\`\`\n${safeContent}\n\`\`\``,
+                        inline: false
+                    }
+                )
+                .setTimestamp();
+
+        await logChannel.send({
+            embeds: [embed]
+        });
+
+    } catch (error) {
+
+        logger.error(
+            `messageDelete hatası: ${error.message}`
+        );
+    }
+});
+
+// ===============================
+// CLIENT ERROR
+// ===============================
+
+client.on("error", error => {
+
+    logger.error(
+        `Discord client hatası: ${error.stack || error.message}`
+    );
+});
+
+// ===============================
+// CLIENT WARN
+// ===============================
+
+client.on("warn", warning => {
+
+    logger.warn(
+        `Discord.js uyarısı: ${warning}`
+    );
+});
+
+// ===============================
 // UNHANDLED REJECTION
-// ============================================================
+// ===============================
 
 process.on(
     "unhandledRejection",
@@ -1049,49 +830,49 @@ process.on(
     }
 );
 
-// ============================================================
+// ===============================
 // UNCAUGHT EXCEPTION
-// ============================================================
+// ===============================
 
 process.on(
     "uncaughtException",
     error => {
 
         logger.error(
-            `Uncaught Exception: ${error?.stack || error}`
+            `Uncaught Exception: ${error.stack || error.message}`
         );
     }
 );
 
-// ============================================================
+// ===============================
 // NODE WARNING
-// ============================================================
+// ===============================
 
 process.on(
     "warning",
     warning => {
 
         logger.warn(
-            `Node Warning: ${warning.message}`
+            `Node warning: ${warning.name}: ${warning.message}`
         );
     }
 );
 
-// ============================================================
+// ===============================
 // SHUTDOWN
-// ============================================================
+// ===============================
 
 async function shutdown(signal) {
 
-    try {
+    logger.info(
+        `${signal} alındı. Shizu kapatılıyor...`
+    );
 
-        logger.info(
-            `${signal} alındı. Bot kapatılıyor...`
-        );
+    try {
 
         client.destroy();
 
-        logger.success(
+        logger.info(
             "Shizu güvenli şekilde kapatıldı."
         );
 
@@ -1109,23 +890,19 @@ async function shutdown(signal) {
 
 process.on(
     "SIGINT",
-    () =>
-        shutdown("SIGINT")
+    () => shutdown("SIGINT")
 );
 
 process.on(
     "SIGTERM",
-    () =>
-        shutdown("SIGTERM")
+    () => shutdown("SIGTERM")
 );
 
-// ============================================================
-// TOKEN
-// ============================================================
+// ===============================
+// LOGIN
+// ===============================
 
-if (
-    !process.env.DISCORD_TOKEN
-) {
+if (!process.env.DISCORD_TOKEN) {
 
     logger.error(
         "DISCORD_TOKEN bulunamadı! .env dosyasını kontrol et."
@@ -1134,19 +911,13 @@ if (
     process.exit(1);
 }
 
-// ============================================================
-// LOGIN
-// ============================================================
-
 client.login(
     process.env.DISCORD_TOKEN
-).catch(
-    error => {
+).catch(error => {
 
-        logger.error(
-            `Discord'a giriş başarısız: ${error.message}`
-        );
+    logger.error(
+        `Discord login hatası: ${error.stack || error.message}`
+    );
 
-        process.exit(1);
-    }
-);
+    process.exit(1);
+});
