@@ -1,6 +1,5 @@
 const {
   EmbedBuilder,
-  AttachmentBuilder,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
@@ -8,9 +7,6 @@ const {
   MessageFlags,
   PermissionsBitField
 } = require('discord.js');
-
-const path = require('path');
-const fs = require('fs');
 
 const store = require('./rpgStore');
 const { ITEMS, RECIPES, ACHIEVEMENTS, EVOLUTIONS } = require('./rpgData');
@@ -47,7 +43,6 @@ const COLORS = {
 
 const UI = {
   line: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-  divider: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
   thin: '────────────────────────────────',
   block: '▰',
   empty: '▱',
@@ -115,39 +110,6 @@ function topHeader(member, page, subtitle) {
   ].join('\n');
 }
 
-
-const UI_ASSETS = {
-  panel: '01_profile.png',
-  profile: '01_profile.png',
-  inventory: '02_inventory.png',
-  achievements: '03_achievements.png',
-  merchant: '04_merchant.png',
-  craft: '05_craft.png',
-  evolution: '06_evolution.png',
-  espada: '07_espada.png',
-  balance: '01_profile.png'
-};
-
-function getUIAsset(page) {
-  const filename = UI_ASSETS[page] || UI_ASSETS.panel;
-  const filePath = path.join(__dirname, 'ui', filename);
-  if (!fs.existsSync(filePath)) return null;
-  return { filePath, filename };
-}
-
-function imageEmbed(embed, page) {
-  const asset = getUIAsset(page);
-  if (!asset) return embed;
-  embed.setImage(`attachment://${asset.filename}`);
-  return embed;
-}
-
-function filesForPage(page) {
-  const asset = getUIAsset(page);
-  if (!asset) return [];
-  return [new AttachmentBuilder(asset.filePath, { name: asset.filename })];
-}
-
 function baseEmbed({
   color = COLORS.shizu,
   page = 'RPG',
@@ -174,7 +136,6 @@ function baseEmbed({
     });
   }
 
-  imageEmbed(embed, page);
   return embed;
 }
 
@@ -682,44 +643,182 @@ function balanceEmbed(member) {
 }
 
 
-
-function imagePayload(interaction, page, extraComponents = []) {
-  return {
-    content: '',
-    embeds: [],
-    files: filesForPage(page),
-    components: [...extraComponents, ...navRows(page)]
-  };
-}
-
 function viewPayload(interaction, page) {
+  const member = interaction.member;
   const guildId = interaction.guild.id;
   const userId = interaction.user.id;
 
   switch (page) {
     case 'profile':
-      return imagePayload(interaction, 'profile');
+      return { embeds: [profileEmbed(member)], components: navRows('profile') };
     case 'inventory':
-      return imagePayload(interaction, 'inventory');
+      return { embeds: [inventoryEmbed(guildId, userId, member)], components: navRows('inventory') };
     case 'merchant':
-      return imagePayload(interaction, 'merchant', merchantComponents());
+      return { embeds: [merchantEmbed(member)], components: [...merchantComponents(), ...navRows('merchant')] };
     case 'achievements':
-      return imagePayload(interaction, 'achievements');
+      return { embeds: [achievementsEmbed(guildId, userId, member)], components: navRows('achievements') };
     case 'craft':
-      return imagePayload(interaction, 'craft', craftComponents());
+      return { embeds: [craftEmbed(member)], components: [...craftComponents(), ...navRows('craft')] };
     case 'evolution':
-      return imagePayload(interaction, 'evolution', evolutionComponents(guildId, userId));
+      return { embeds: [evolutionEmbed(guildId, userId, member)], components: [...evolutionComponents(guildId, userId), ...navRows('evolution')] };
     case 'espada':
-      return imagePayload(interaction, 'espada');
+      return { embeds: [espadaEmbed(member)], components: navRows('espada') };
     case 'balance':
-      return imagePayload(interaction, 'balance');
+      return { embeds: [balanceEmbed(member)], components: navRows('balance') };
     default:
-      return imagePayload(interaction, 'profile');
+      return { embeds: [panelEmbed(member)], components: navRows() };
+  }
+}
+
+function resultEmbed(title, description, color = COLORS.green) {
+  return baseEmbed({ color, title, subtitle: description });
+}
+
+function replyError(interaction, message) {
+  return interaction.reply({
+    content: `❌ ${message}`,
+    flags: MessageFlags.Ephemeral
+  });
+}
+
+// ============================================================
+// GAME ACTIONS
+// ============================================================
+
+function buy(guildId, userId, index) {
+  const m = store.getMerchant();
+  if (!m.active || m.expiresAt <= Date.now()) throw new Error('Tüccar artık aktif değil.');
+
+  const stock = m.stock[index];
+  if (!stock) throw new Error('Geçersiz stok.');
+  if (stock.remaining === 0) throw new Error('Bu eşya tükendi.');
+
+  const p = store.getPlayer(guildId, userId);
+  if (p.coins.animeCoin < stock.price) throw new Error('Yeterli Anime Coin yok.');
+
+  p.coins.animeCoin -= stock.price;
+  store.savePlayer(p);
+  store.addItem(guildId, userId, stock.item, 1);
+
+  if (stock.remaining !== null) {
+    stock.remaining--;
+    store.saveMerchant(m);
+  }
+
+  return ITEMS[stock.item]?.name || stock.item;
+}
+
+function craft(guildId, userId, id) {
+  const recipe = RECIPES[id];
+  if (!recipe) throw new Error('Tarif bulunamadı.');
+
+  const p = store.getPlayer(guildId, userId);
+  if (p.coins.animeCoin < recipe.coins) throw new Error('Yeterli Anime Coin yok.');
+  if (!store.removeItems(guildId, userId, recipe.materials)) throw new Error('Gerekli materyaller eksik.');
+
+  p.coins.animeCoin -= recipe.coins;
+  store.savePlayer(p);
+  store.addItem(guildId, userId, recipe.item, recipe.amount);
+
+  return ITEMS[recipe.item]?.name || recipe.item;
+}
+
+function evolve(guildId, userId, target) {
+  const p = store.getPlayer(guildId, userId);
+  const next = EVOLUTIONS[p.evolution]?.next || [];
+
+  if (!next.includes(target)) throw new Error('Bu dönüşüm mevcut gelişim yolunda değil.');
+
+  if (target === 'hollow') {
+    if (!store.hasItems(guildId, userId, { hollow_mask: 1 })) throw new Error('🎭 Hollow Mask gerekli.');
+    if (p.achievementPoints < 250) throw new Error('⭐ 250 Achievement Point gerekli.');
+    if (p.coins.animeCoin < 1000) throw new Error('🪙 1000 Anime Coin gerekli.');
+
+    store.removeItems(guildId, userId, { hollow_mask: 1 });
+    p.coins.animeCoin -= 1000;
+    p.race = 'hollow';
+  }
+
+  p.evolution = target;
+  store.savePlayer(p);
+  return p;
+}
+
+function claimAchievement(guildId, userId, id) {
+  const achievement = ACHIEVEMENTS[id];
+  if (!achievement) throw new Error('Achievement bulunamadı.');
+
+  const p = store.getPlayer(guildId, userId);
+  if (p.achievements.includes(id)) throw new Error('Bu achievement zaten alındı.');
+
+  p.achievements.push(id);
+  p.achievementPoints += achievement.reward.points || 0;
+  if (achievement.reward.animeCoin) p.coins.animeCoin += achievement.reward.animeCoin;
+  if (achievement.reward.title) p.activeTitle = achievement.reward.title;
+  store.savePlayer(p);
+
+  if (achievement.reward.rareMaterial) {
+    store.addItem(guildId, userId, 'rare_material', achievement.reward.rareMaterial);
+  }
+
+  return achievement;
+}
+
+function claimEspada(guildId, userId, slot) {
+  if (slot < 0 || slot > 9) throw new Error('Espada slotu 0-9 olmalı.');
+
+  const p = store.getPlayer(guildId, userId);
+  if (p.race !== 'hollow' || p.evolution !== 'arrancar') {
+    throw new Error('Espada olmak için Arrancar olmalısın.');
+  }
+
+  const e = store.getEspada();
+  const key = String(slot);
+  if (e.slots[key]) throw new Error(`Espada ${slot} zaten dolu.`);
+
+  e.slots[key] = { guildId, userId, claimedAt: Date.now() };
+  store.saveEspada(e);
+
+  p.evolution = 'espada';
+  p.activeTitle = `Espada #${slot}`;
+  store.savePlayer(p);
+
+  return slot;
+}
+
+// ============================================================
+// VIEW HELPERS
+// ============================================================
+
+function viewPayload(interaction, page) {
+  const member = interaction.member;
+  const guildId = interaction.guild.id;
+  const userId = interaction.user.id;
+
+  switch (page) {
+    case 'profile':
+      return { embeds: [profileEmbed(member)], components: navRows('profile') };
+    case 'inventory':
+      return { embeds: [inventoryEmbed(guildId, userId, member)], components: navRows('inventory') };
+    case 'merchant':
+      return { embeds: [merchantEmbed()], components: [...merchantComponents(), ...navRows('merchant')] };
+    case 'achievements':
+      return { embeds: [achievementsEmbed(guildId, userId, member)], components: navRows('achievements') };
+    case 'craft':
+      return { embeds: [craftEmbed(member)], components: [...craftComponents(), ...navRows('craft')] };
+    case 'evolution':
+      return { embeds: [evolutionEmbed(guildId, userId, member)], components: [...evolutionComponents(guildId, userId), ...navRows('evolution')] };
+    case 'espada':
+      return { embeds: [espadaEmbed(member)], components: navRows('espada') };
+    case 'balance':
+      return { embeds: [balanceEmbed(member)], components: navRows('balance') };
+    default:
+      return { embeds: [panelEmbed(member)], components: navRows() };
   }
 }
 
 function showPanel(interaction, edit = false) {
-  const payload = viewPayload(interaction, 'profile');
+  const payload = viewPayload(interaction, 'panel');
   return edit ? interaction.update(payload) : interaction.reply(payload);
 }
 
@@ -747,17 +846,33 @@ async function handleButton(interaction) {
 
     if (id === 'rpg:buy-select') {
       const name = buy(interaction.guild.id, interaction.user.id, Number(interaction.values[0]));
-      return interaction.update(imagePayload(interaction, 'merchant', merchantComponents()));
+      return interaction.update({
+        embeds: [
+          resultEmbed('✓  SATIN ALMA TAMAM', `**${name}** envanterine eklendi.\n\n${UI.divider}\nTüccar stoğu aşağıda güncellendi.`, COLORS.green),
+          merchantEmbed()
+        ],
+        components: [...merchantComponents(), ...navRows('merchant')]
+      });
     }
 
     if (id === 'rpg:craft-select') {
-      craft(interaction.guild.id, interaction.user.id, interaction.values[0]);
-      return interaction.update(imagePayload(interaction, 'craft', craftComponents()));
+      const name = craft(interaction.guild.id, interaction.user.id, interaction.values[0]);
+      return interaction.update({
+        embeds: [
+          resultEmbed('✓  CRAFT TAMAMLANDI', `**${name}** üretildi.\n\n${UI.divider}\nYeni eşyayı envanterinde bulabilirsin.`, COLORS.green)
+        ],
+        components: navRows('craft')
+      });
     }
 
     if (id === 'rpg:evolution-select') {
-      evolve(interaction.guild.id, interaction.user.id, interaction.values[0]);
-      return interaction.update(imagePayload(interaction, 'evolution', evolutionComponents(interaction.guild.id, interaction.user.id)));
+      const p = evolve(interaction.guild.id, interaction.user.id, interaction.values[0]);
+      return interaction.update({
+        embeds: [
+          resultEmbed('✦  EVOLUTION COMPLETE', `Yeni formun:\n\n**${titleCase(p.evolution)}**\n\nGücün bir sonraki aşamaya geçti.`, COLORS.pink)
+        ],
+        components: [...evolutionComponents(interaction.guild.id, interaction.user.id), ...navRows('evolution')]
+      });
     }
   } catch (error) {
     if (interaction.replied || interaction.deferred) {
@@ -881,7 +996,5 @@ module.exports = {
   evolutionEmbed,
   espadaEmbed,
   store,
-  ITEMS,
-  UI_ASSETS,
-  getUIAsset
+  ITEMS
 };
