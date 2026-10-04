@@ -1,47 +1,30 @@
-# Discord Bot Starter
+# Shizu Anime RPG — Entegre Paket
 
-Discord.js v14 tabanlı profesyonel bot başlangıç projesi.
+Bu paket mevcut Shizu botuna RPG katmanını eklemek için hazırlanmıştır.
 
-## Özellikler
-
-- Slash command altyapısı
-- `/ping`
-- `/serverinfo`
-- `/userinfo`
-- `/clear`
-- `/kick`
-- `/ban`
-- `/timeout`
-- `/warn`
-- `/warnings`
-- `/setwelcome`
-- `/setlog`
-- Welcome mesajları
-- Moderasyon logları
-- JSON tabanlı basit veri saklama
-- Permission kontrolleri
-- Merkezi config sistemi
+## Kopyalanacak dosyalar
+- `src/index.js` → mevcut index.js ile değiştir
+- `src/deploy-commands.js` → mevcut deploy dosyanla değiştir
+- `src/rpg/` → klasörü komple kopyala
+- `src/commands/rpg.js`
+- `src/commands/rpgadmin.js`
+- `data/rpg/` → kalıcı RPG verileri burada oluşur
 
 ## Kurulum
+1. Bot klasöründe yedek al.
+2. Bu paketteki dosyaları proje köküne kopyala ve üzerine yaz.
+3. `.env` içinde `DISCORD_TOKEN`, `CLIENT_ID`, `GUILD_ID` kalsın.
+4. Terminalde:
+   `node src/deploy-commands.js`
+5. Ardından:
+   `node src/index.js`
 
-1. Node.js 22+ kur.
-2. Bu klasörde:
-   ```bash
-   npm install
-   ```
-3. `.env.example` dosyasını `.env` olarak kopyala.
-4. Token, Client ID ve test sunucusu ID'sini `.env` içine yaz.
-5. Botu Discord Developer Portal'dan sunucuna eklerken `bot` ve `applications.commands` scope'larını ver.
-6. Gerekli bot intentlerini aç.
-7. Slash komutlarını kaydet:
-   ```bash
-   node src/deploy-commands.js
-   ```
-8. Botu başlat:
-   ```bash
-   npm start
-   ```
+## Kullanım
+`/rpg panel`
 
-## Not
+Panel tamamen butonludur. Profil, envanter, tüccar, görevler, başarımlar, craft, gelişim, Espada ve bakiye tek panelden yönetilir.
 
-`.env` dosyanı paylaşma ve GitHub'a yükleme.
+Yönetici:
+- `/rpgadmin merchant minutes:30`
+- `/rpgadmin give user:@... item:hollow_mask amount:1`
+- `/rpgadmin coin user:@... amount:1000`
