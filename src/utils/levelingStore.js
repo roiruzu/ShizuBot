@@ -59,7 +59,6 @@ function createDefaultUser() {
 }
 
 function getUser(guildId, userId) {
-
     const data = readData();
 
     if (!data[guildId]) {
@@ -67,22 +66,14 @@ function getUser(guildId, userId) {
     }
 
     if (!data[guildId][userId]) {
-
-        data[guildId][userId] =
-            createDefaultUser();
-
+        data[guildId][userId] = createDefaultUser();
         writeData(data);
     }
 
     return data[guildId][userId];
 }
 
-function updateUser(
-    guildId,
-    userId,
-    updates
-) {
-
+function updateUser(guildId, userId, updates) {
     const data = readData();
 
     if (!data[guildId]) {
@@ -90,8 +81,7 @@ function updateUser(
     }
 
     if (!data[guildId][userId]) {
-        data[guildId][userId] =
-            createDefaultUser();
+        data[guildId][userId] = createDefaultUser();
     }
 
     data[guildId][userId] = {
@@ -109,16 +99,16 @@ function updateUser(
 
     Level 0 -> 0 XP
     Level 1 -> 100 XP
-    Level 2 -> 283 XP
+    Level 2 -> 282 XP
     Level 3 -> 519 XP
-    ...
+    Level 4 -> 800 XP
+    Level 5 -> 1118 XP
 
-    Her level için gereken toplam XP:
+    Formül:
     100 * level ^ 1.5
 */
 
 function getRequiredTotalXP(level) {
-
     if (level <= 0) {
         return 0;
     }
@@ -129,7 +119,6 @@ function getRequiredTotalXP(level) {
 }
 
 function calculateLevel(xp) {
-
     if (!xp || xp <= 0) {
         return 0;
     }
@@ -146,17 +135,11 @@ function calculateLevel(xp) {
     return level;
 }
 
-function addXP(
-    guildId,
-    userId,
-    amount
-) {
-
-    const user =
-        getUser(
-            guildId,
-            userId
-        );
+function addXP(guildId, userId, amount) {
+    const user = getUser(
+        guildId,
+        userId
+    );
 
     const oldLevel =
         calculateLevel(user.xp);
@@ -166,8 +149,7 @@ function addXP(
     const newLevel =
         calculateLevel(user.xp);
 
-    user.level =
-        newLevel;
+    user.level = newLevel;
 
     updateUser(
         guildId,
@@ -184,15 +166,56 @@ function addXP(
     };
 }
 
-function getAllUsers(guildId) {
+/*
+    TEST / ADMIN SİSTEMİ
 
+    Kullanıcının levelini direkt ayarlar.
+    XP otomatik olarak o level için
+    gereken toplam XP'ye ayarlanır.
+
+    Örnek:
+
+    setLevel(guildId, userId, 5)
+
+    => Level 5
+    => 1118 XP
+*/
+
+function setLevel(guildId, userId, level) {
+    level = Number(level);
+
+    if (!Number.isInteger(level)) {
+        throw new Error("Level tam sayı olmalıdır.");
+    }
+
+    if (level < 0) {
+        level = 0;
+    }
+
+    if (level > 1000) {
+        level = 1000;
+    }
+
+    const xp =
+        getRequiredTotalXP(level);
+
+    return updateUser(
+        guildId,
+        userId,
+        {
+            xp,
+            level
+        }
+    );
+}
+
+function getAllUsers(guildId) {
     const data = readData();
 
     return data[guildId] || {};
 }
 
 function getLeaderboard(guildId) {
-
     const users =
         getAllUsers(guildId);
 
@@ -202,7 +225,6 @@ function getLeaderboard(guildId) {
             ...user
         }))
         .sort((a, b) => {
-
             if (b.level !== a.level) {
                 return b.level - a.level;
             }
@@ -211,11 +233,7 @@ function getLeaderboard(guildId) {
         });
 }
 
-function getUserRank(
-    guildId,
-    userId
-) {
-
+function getUserRank(guildId, userId) {
     const leaderboard =
         getLeaderboard(guildId);
 
@@ -234,6 +252,7 @@ module.exports = {
     getUser,
     updateUser,
     addXP,
+    setLevel,
     calculateLevel,
     getRequiredTotalXP,
     getAllUsers,
