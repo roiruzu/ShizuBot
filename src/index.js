@@ -19,6 +19,7 @@ const { handleCommandError } = require("./utils/errorHandler");
 const { handleWarningError } = require("./utils/warningErrorHandler");
 const { getOrCreateLogChannel } = require("./utils/logChannel");
 const { handleTicketButton } = require("./utils/ticketManager");
+const { containsProfanity } = require("./utils/profanityFilter");
 
 
 // ============================================================
@@ -75,6 +76,7 @@ if (fs.existsSync(commandsPath)) {
             const command = require(filePath);
 
             if (!command.data || !command.execute) {
+
                 logger.warn(
                     `Geçersiz command dosyası atlandı: ${file}`
                 );
@@ -85,6 +87,7 @@ if (fs.existsSync(commandsPath)) {
             const commandName = command.data.name;
 
             if (!commandName) {
+
                 logger.warn(
                     `Command adı bulunamadı: ${file}`
                 );
@@ -93,6 +96,7 @@ if (fs.existsSync(commandsPath)) {
             }
 
             if (client.commands.has(commandName)) {
+
                 logger.warn(
                     `Aynı command zaten yüklü: /${commandName}`
                 );
@@ -100,7 +104,10 @@ if (fs.existsSync(commandsPath)) {
                 continue;
             }
 
-            client.commands.set(commandName, command);
+            client.commands.set(
+                commandName,
+                command
+            );
 
             logger.info(
                 `Command yüklendi: /${commandName}`
@@ -402,6 +409,99 @@ client.on("interactionCreate", async interaction => {
             error,
             interaction
         );
+    }
+});
+
+
+// ============================================================
+// KÜFÜR FİLTRESİ
+// ============================================================
+
+client.on("messageCreate", async message => {
+
+    try {
+
+        // DM mesajlarını kontrol etme
+        if (!message.guild) {
+            return;
+        }
+
+        // Botların mesajlarını kontrol etme
+        if (message.author.bot) {
+            return;
+        }
+
+        // Küfür yoksa devam et
+        if (!containsProfanity(message.content)) {
+            return;
+        }
+
+
+        // ====================================================
+        // MESAJI SİL
+        // ====================================================
+
+        const deleted =
+            await message.delete().catch(() => null);
+
+
+        if (!deleted) {
+
+            logger.warn(
+                `Küfür mesajı silinemedi | ` +
+                `Kullanıcı: ${message.author.tag} (${message.author.id}) | ` +
+                `Kanal: #${message.channel?.name || "bilinmiyor"}`
+            );
+
+            return;
+        }
+
+
+        // ====================================================
+        // UYARI MESAJI
+        // ====================================================
+
+        const warning =
+            await message.channel.send({
+                content:
+                    `⚠️ ${message.author}, lütfen bu sunucuda küfür kullanma.`
+            }).catch(() => null);
+
+
+        // ====================================================
+        // 5 SANİYE SONRA UYARIYI SİL
+        // ====================================================
+
+        if (warning) {
+
+            setTimeout(() => {
+
+                warning
+                    .delete()
+                    .catch(() => {});
+
+            }, 5000);
+        }
+
+
+        // ====================================================
+        // LOG
+        // ====================================================
+
+        logger.warn(
+            `Küfür filtresi | ` +
+            `Kullanıcı: ${message.author.tag} (${message.author.id}) | ` +
+            `Sunucu: ${message.guild.name} (${message.guild.id}) | ` +
+            `Kanal: #${message.channel?.name || "bilinmiyor"} (${message.channel.id})`
+        );
+
+    } catch (error) {
+
+        logger.error(
+            "Küfür filtresi hatası:"
+        );
+
+        logger.error(error);
     }
 });
 
