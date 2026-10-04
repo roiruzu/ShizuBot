@@ -17,23 +17,37 @@ const { ITEMS, RECIPES, ACHIEVEMENTS, EVOLUTIONS } = require('./rpgData');
 // uyarlayan ortak UI katmanı.
 // ============================================================
 
+
+// ============================================================
+// SHIZU RPG — SHIZU UI SYSTEM v3
+// Mor / neon / premium dashboard dili.
+// Discord Embed sınırları içinde kart, istatistik, progress,
+// section ve navigation sistemini ortaklaştırır.
+// ============================================================
+
 const COLORS = {
-  purple: 0x8b5cf6,
-  purpleDark: 0x4c1d95,
-  blue: 0x6366f1,
-  cyan: 0x06b6d4,
-  gold: 0xf59e0b,
-  green: 0x10b981,
-  red: 0xef4444,
-  pink: 0xec4899,
-  neutral: 0x18181b
+  shizu: 0x8B5CF6,
+  shizuDeep: 0x5B21B6,
+  violet: 0xA78BFA,
+  neon: 0xC084FC,
+  blue: 0x6366F1,
+  cyan: 0x22D3EE,
+  pink: 0xF472B6,
+  gold: 0xFBBF24,
+  green: 0x34D399,
+  red: 0xFB7185,
+  dark: 0x171225,
+  dark2: 0x211A35,
+  muted: 0x6B6280
 };
 
 const UI = {
-  divider: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-  dot: '•',
-  empty: '—',
-  footer: 'SHIZU RPG  •  Anime Universe'
+  line: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+  thin: '────────────────────────────────',
+  block: '▰',
+  empty: '▱',
+  footer: 'SHIZU • ANIME RPG  //  POWERED BY SHIZU',
+  icon: '✦'
 };
 
 function fmt(value) {
@@ -53,43 +67,89 @@ function titleCase(value) {
 function rarity(value) {
   return ({
     common: 'COMMON',
+    uncommon: 'UNCOMMON',
     rare: 'RARE',
-    special: 'SPECIAL',
     epic: 'EPIC',
+    legendary: 'LEGENDARY',
     mythic: 'MYTHIC'
-  }[value] || String(value || 'UNKNOWN').toUpperCase());
+  }[value] || String(value || 'NORMAL').toUpperCase());
+}
+
+function rarityIcon(value) {
+  return ({
+    common: '◆',
+    uncommon: '◇',
+    rare: '✦',
+    epic: '✧',
+    legendary: '★',
+    mythic: '✹'
+  }[value] || '•');
 }
 
 function coins(p) {
   return [
-    `🪙 **${fmt(p.coins.animeCoin)}**`,
-    `💎 **${fmt(p.coins.rareCurrency)}**`,
-    `🌑 **${fmt(p.coins.eventCurrency)}**`
+    `🪙 **${fmt(p.coins?.animeCoin)}**`,
+    `💎 **${fmt(p.coins?.rareCurrency)}**`,
+    `🌑 **${fmt(p.coins?.eventCurrency)}**`
   ].join('   ');
 }
 
-function progressBar(current, max, size = 14) {
-  const ratio = max <= 0 ? 0 : Math.max(0, Math.min(1, current / max));
-  const filled = Math.round(ratio * size);
-  return `${'▰'.repeat(filled)}${'▱'.repeat(size - filled)}`;
+function progressBar(current, max, size = 12) {
+  const value = Math.max(0, Number(current || 0));
+  const total = Math.max(1, Number(max || 1));
+  const filled = Math.min(size, Math.round((value / total) * size));
+  return `${UI.block.repeat(filled)}${UI.empty.repeat(size - filled)}`;
 }
 
-function baseEmbed({ color = COLORS.purple, title, subtitle, member, footer = UI.footer }) {
+function topHeader(member, page, subtitle) {
+  const name = member ? safeName(member.displayName) : 'Shizu World';
+  return [
+    `**SHIZU  /  ANIME RPG**`,
+    `\`${page.toUpperCase()}\`  •  ${name}`,
+    subtitle || 'Anime evrenindeki yolculuğuna devam et.'
+  ].join('\n');
+}
+
+function baseEmbed({
+  color = COLORS.shizu,
+  page = 'RPG',
+  title,
+  subtitle,
+  member,
+  description,
+  footer = UI.footer
+}) {
   const embed = new EmbedBuilder()
     .setColor(color)
-    .setTitle(title)
-    .setFooter({ text: footer });
+    .setTitle(`${UI.icon}  ${title}`)
+    .setDescription(
+      `${description || topHeader(member, page, subtitle)}\n\n${UI.line}`
+    )
+    .setFooter({ text: footer })
+    .setTimestamp();
 
-  if (subtitle) embed.setDescription(subtitle);
-  if (member) embed.setThumbnail(member.displayAvatarURL({ size: 256 }));
+  if (member) {
+    embed.setThumbnail(member.displayAvatarURL({ size: 256, extension: 'png' }));
+    embed.setAuthor({
+      name: `${safeName(member.displayName)} • Shizu RPG`,
+      iconURL: member.displayAvatarURL({ size: 64, extension: 'png' })
+    });
+  }
+
   return embed;
 }
 
+function statField(name, value, inline = true) {
+  return {
+    name,
+    value: String(value || '—').slice(0, 1024),
+    inline
+  };
+}
+
 function navRows(active = 'profile') {
-  // Discord bazen emoji alanını özel emoji gibi yorumlayabiliyor.
-  // Bu nedenle panel butonlarında .setEmoji() HİÇ kullanmıyoruz.
-  // Unicode emojiler doğrudan label içinde kullanılıyor.
-  const button = (id, label, style = ButtonStyle.Secondary) =>
+  // Özel emoji yok. Unicode emojiler label içinde kullanılıyor.
+  const make = (id, label, style = ButtonStyle.Secondary) =>
     new ButtonBuilder()
       .setCustomId(`rpg:${id}`)
       .setLabel(label)
@@ -97,18 +157,18 @@ function navRows(active = 'profile') {
 
   return [
     new ActionRowBuilder().addComponents(
-      button('profile', '👤 Profil'),
-      button('inventory', '🎒 Envanter'),
-      button('achievements', '🏆 Başarımlar'),
-      button('merchant', '🏪 Tüccar'),
-      button('craft', '⚒️ Craft')
+      make('profile', '👤  Profil'),
+      make('inventory', '🎒  Envanter'),
+      make('achievements', '🏆  Başarımlar'),
+      make('merchant', '🏪  Tüccar'),
+      make('craft', '⚒️  Craft')
     ),
     new ActionRowBuilder().addComponents(
-      button('evolution', '🧬 Gelişim'),
-      button('espada', '⚔️ Espada', ButtonStyle.Danger),
-      button('balance', '💰 Bakiye'),
-      button('refresh', '🔄 Yenile'),
-      button('panel', '🏠 Ana Panel')
+      make('evolution', '🧬  Gelişim'),
+      make('espada', '⚔️  Espada', ButtonStyle.Danger),
+      make('balance', '💰  Bakiye'),
+      make('refresh', '↻  Yenile'),
+      make('panel', '⌂  Ana Panel')
     )
   ];
 }
@@ -116,103 +176,193 @@ function navRows(active = 'profile') {
 function panelEmbed(member) {
   const p = store.getPlayer(member.guild.id, member.id);
 
-  return baseEmbed({
-    color: COLORS.purple,
-    title: '✦ SHIZU  /  ANIME RPG',
-    subtitle:
-      `**${safeName(member.displayName)}**, anime evrenine hoş geldin.\n` +
-      `Aşağıdaki modüllerden birini seçerek macerana devam et.\n\n` +
-      `**${titleCase(p.race)}**  ${UI.dot}  **${titleCase(p.evolution)}**  ${UI.dot}  **${safeName(p.activeTitle || 'Yeni Oyuncu')}**\n\n` +
-      `${UI.divider}\n` +
-      `🪙 ${fmt(p.coins.animeCoin)}   💎 ${fmt(p.coins.rareCurrency)}   🌑 ${fmt(p.coins.eventCurrency)}   ${UI.dot}   ⭐ ${fmt(p.achievementPoints)} AP`,
-    member
+  const embed = baseEmbed({
+    color: COLORS.shizu,
+    page: 'Dashboard',
+    title: 'SHIZU  •  RPG DASHBOARD',
+    member,
+    subtitle: 'Karanlık anime evrenine hoş geldin.'
   });
+
+  embed.addFields(
+    statField('🧬  KÖKEN', `**${titleCase(p.race)}**`),
+    statField('⚔️  GELİŞİM', `**${titleCase(p.evolution)}**`),
+    statField('👑  UNVAN', `**${safeName(p.activeTitle || 'Yeni Oyuncu')}**`),
+    statField('⭐  ACHIEVEMENT', `**${fmt(p.achievementPoints)} AP**`),
+    statField('🪙  ANIME COIN', `**${fmt(p.coins?.animeCoin)}**`),
+    statField('💎  RARE', `**${fmt(p.coins?.rareCurrency)}**`),
+    statField('🌑  EVENT', `**${fmt(p.coins?.eventCurrency)}**`),
+    statField(
+      '📊  RPG PROGRESS',
+      `${progressBar(p.achievementPoints, Math.max(1000, p.achievementPoints || 1))}\n**${fmt(p.achievementPoints)} AP**`,
+      false
+    )
+  );
+
+  embed.addFields({
+    name: '✦  SHIZU MODULES',
+    value:
+      '👤 Profil  •  🎒 Envanter  •  🏆 Başarımlar\n' +
+      '🏪 Tüccar  •  ⚒️ Craft  •  🧬 Gelişim  •  ⚔️ Espada',
+    inline: false
+  });
+
+  return embed;
 }
 
 function profileEmbed(member) {
   const p = store.getPlayer(member.guild.id, member.id);
+  const completed = p.completedQuests?.length || 0;
+  const unlocked = p.unlockedSystems?.length || 0;
 
-  return baseEmbed({
-    color: COLORS.purple,
-    title: `👤  ${safeName(member.displayName)}`,
-    subtitle: `**${safeName(p.activeTitle || 'Yeni Oyuncu')}**\n${UI.divider}`,
-    member
-  })
-    .addFields(
-      {
-        name: '🧬 Köken',
-        value: `**${titleCase(p.race)}**`,
-        inline: true
-      },
-      {
-        name: '⚔️ Gelişim',
-        value: `**${titleCase(p.evolution)}**`,
-        inline: true
-      },
-      {
-        name: '🔄 Rebirth',
-        value: `**${fmt(p.rebirths)}**`,
-        inline: true
-      },
-      {
-        name: '🏆 Achievement Point',
-        value: `**${fmt(p.achievementPoints)} AP**`,
-        inline: true
-      },
-      {
-        name: '💰 Servet',
-        value: coins(p),
-        inline: false
-      },
-      {
-        name: '🌌 RPG Durumu',
-        value: `Anime: **${titleCase(p.anime)}**\nTamamlanan görev: **${p.completedQuests?.length || 0}**\nAçılan sistem: **${p.unlockedSystems?.length || 0}**`,
-        inline: false
-      }
-    );
+  const embed = baseEmbed({
+    color: COLORS.shizu,
+    page: 'Profile',
+    title: 'PLAYER PROFILE',
+    member,
+    subtitle: 'Karakter kartın ve Shizu RPG istatistiklerin.'
+  });
+
+  embed.addFields(
+    statField('🧬  KÖKEN', `**${titleCase(p.race)}**`),
+    statField('⚔️  FORM', `**${titleCase(p.evolution)}**`),
+    statField('🔄  REBIRTH', `**${fmt(p.rebirths)}**`),
+    statField('👑  UNVAN', `**${safeName(p.activeTitle || 'Yeni Oyuncu')}**`),
+    statField('⭐  ACHIEVEMENT POINT', `**${fmt(p.achievementPoints)} AP**`),
+    statField('🌌  EVREN', `**${titleCase(p.anime)}**`)
+  );
+
+  embed.addFields({
+    name: '💰  WALLET',
+    value:
+      `🪙 **${fmt(p.coins?.animeCoin)}** Anime Coin\n` +
+      `💎 **${fmt(p.coins?.rareCurrency)}** Rare Currency\n` +
+      `🌑 **${fmt(p.coins?.eventCurrency)}** Event Currency`,
+    inline: true
+  }, {
+    name: '📈  PROGRESS',
+    value:
+      `Görevler  **${fmt(completed)}**\n` +
+      `Sistemler  **${fmt(unlocked)}**\n` +
+      `Rebirth    **${fmt(p.rebirths)}**`,
+    inline: true
+  });
+
+  embed.addFields({
+    name: '✦  CHARACTER STATUS',
+    value:
+      `\`${titleCase(p.evolution).toUpperCase()}\`\n` +
+      `${progressBar(p.achievementPoints, Math.max(1000, p.achievementPoints || 1))}\n` +
+      `**${fmt(p.achievementPoints)} AP**`,
+    inline: false
+  });
+
+  return embed;
 }
 
 function inventoryEmbed(guildId, userId, member) {
   const inv = store.getInventory(guildId, userId);
   const entries = Object.entries(inv).filter(([, amount]) => Number(amount) > 0);
 
-  const lines = entries.map(([id, amount]) => {
-    const item = ITEMS[id] || {};
-    return `**${item.name || id}**  ×${fmt(amount)}\n${UI.dot} ${rarity(item.rarity)}  ${item.description || 'RPG eşyası.'}`;
+  const embed = baseEmbed({
+    color: COLORS.blue,
+    page: 'Inventory',
+    title: 'INVENTORY',
+    member,
+    subtitle: entries.length
+      ? `${entries.length} farklı eşya • Envanterin kontrol paneli.`
+      : 'Envanterin şu anda boş.'
   });
 
-  return baseEmbed({
-    color: COLORS.blue,
-    title: '🎒  ENVANTER',
-    subtitle: entries.length
-      ? `Sahip olduğun eşyalar\n${UI.divider}\n${lines.join('\n\n')}`
-      : `Envanterin şu anda boş.\n\n${UI.divider}\nTüccarı ziyaret et veya görevlerden eşya kazan.`,
-    member
+  if (!entries.length) {
+    embed.addFields({
+      name: '🎒  EMPTY INVENTORY',
+      value:
+        'Henüz eşyan yok.\n\n' +
+        '🏪 Tüccarı ziyaret et veya görevlerden eşya kazan.',
+      inline: false
+    });
+    return embed;
+  }
+
+  const chunks = [];
+  for (let i = 0; i < entries.length; i += 5) chunks.push(entries.slice(i, i + 5));
+
+  chunks.forEach((chunk, index) => {
+    embed.addFields({
+      name: `${index === 0 ? '🎒' : '◈'}  ITEM CACHE ${index + 1}`,
+      value: chunk.map(([id, amount]) => {
+        const item = ITEMS[id] || {};
+        return [
+          `${rarityIcon(item.rarity)} **${item.name || id}**  × **${fmt(amount)}**`,
+          `\`${rarity(item.rarity)}\`  ${item.description || 'RPG eşyası.'}`
+        ].join('\n');
+      }).join('\n\n'),
+      inline: false
+    });
   });
+
+  return embed;
 }
 
-function merchantEmbed() {
+function merchantEmbed(member) {
   const m = store.getMerchant();
 
   if (!m.active || m.expiresAt <= Date.now()) {
     return baseEmbed({
-      color: COLORS.neutral,
-      title: '🏪  THE MERCHANT',
-      subtitle: `Tüccar şu anda dünyada değil.\n\n${UI.divider}\nYeni bir stok açıldığında burada görünecek.`
+      color: COLORS.dark2,
+      page: 'Merchant',
+      title: 'THE MERCHANT',
+      member,
+      subtitle: 'Tüccar şu anda dünyada değil.'
+    }).addFields({
+      name: '◇  MARKET OFFLINE',
+      value:
+        'Yeni bir stok açıldığında burada görünecek.\n' +
+        'Zamanlı stoklar ve world event eşyaları sınırlıdır.',
+      inline: false
     });
   }
 
-  const lines = m.stock.map((stock, index) => {
-    const item = ITEMS[stock.item] || {};
-    return `**${String(index + 1).padStart(2, '0')}  ${item.name || stock.item}**\n` +
-      `${UI.dot} 🪙 ${fmt(stock.price)} Anime Coin   ${UI.dot} ${rarity(item.rarity)}   ${UI.dot} ${stock.remaining === null ? '∞' : `×${stock.remaining}`}`;
+  const embed = baseEmbed({
+    color: COLORS.gold,
+    page: 'Merchant',
+    title: 'THE MERCHANT',
+    member,
+    subtitle: `Sınırlı stok • Kapanış <t:${Math.floor(m.expiresAt / 1000)}:R>`
   });
 
-  return baseEmbed({
-    color: COLORS.gold,
-    title: '🏪  THE MERCHANT HAS ARRIVED',
-    subtitle: `${UI.divider}\n${lines.join('\n\n')}\n\n${UI.divider}\n⏳ **Kapanıyor:** <t:${Math.floor(m.expiresAt / 1000)}:R>`
+  embed.addFields({
+    name: '⏳  MARKET TIMER',
+    value: `<t:${Math.floor(m.expiresAt / 1000)}:F>\n<t:${Math.floor(m.expiresAt / 1000)}:R>`,
+    inline: true
+  }, {
+    name: '📦  STOCK',
+    value: `**${m.stock.length}** ürün`,
+    inline: true
   });
+
+  const lines = m.stock.map((stock, index) => {
+    const item = ITEMS[stock.item] || {};
+    const remaining = stock.remaining === null ? '∞' : `×${stock.remaining}`;
+    return (
+      `**${String(index + 1).padStart(2, '0')}**  ${rarityIcon(item.rarity)} **${item.name || stock.item}**\n` +
+      `> \`🪙 ${fmt(stock.price)}\`  •  \`${rarity(item.rarity)}\`  •  **${remaining}**`
+    );
+  });
+
+  const chunks = [];
+  for (let i = 0; i < lines.length; i += 5) chunks.push(lines.slice(i, i + 5));
+
+  chunks.forEach((chunk, index) => {
+    embed.addFields({
+      name: `🏪  ${index === 0 ? 'CURRENT STOCK' : 'MORE STOCK'}  ${index + 1}`,
+      value: chunk.join('\n\n'),
+      inline: false
+    });
+  });
+
+  return embed;
 }
 
 function merchantComponents() {
@@ -227,7 +377,7 @@ function merchantComponents() {
       const item = ITEMS[stock.item] || {};
       return {
         label: `${index + 1}. ${item.name || stock.item}`.slice(0, 100),
-        description: `🪙 ${fmt(stock.price)} • ${stock.remaining === null ? 'Sınırsız' : `Kalan ${stock.remaining}`}`.slice(0, 100),
+        description: `${fmt(stock.price)} Anime Coin • ${stock.remaining === null ? 'Sınırsız' : `Kalan ${stock.remaining}`}`.slice(0, 100),
         value: String(index)
       };
     });
@@ -238,7 +388,7 @@ function merchantComponents() {
     new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId('rpg:buy-select')
-        .setPlaceholder('Bir eşya satın al')
+        .setPlaceholder('▾  Satın almak için eşya seç')
         .addOptions(options)
     )
   ];
@@ -247,46 +397,93 @@ function merchantComponents() {
 function achievementsEmbed(guildId, userId, member) {
   const p = store.getPlayer(guildId, userId);
   const claimed = new Set(p.achievements || []);
+  const entries = Object.entries(ACHIEVEMENTS);
 
-  const lines = Object.entries(ACHIEVEMENTS).map(([id, achievement]) => {
+  const completed = entries.filter(([id]) => claimed.has(id)).length;
+  const percent = entries.length ? Math.round((completed / entries.length) * 100) : 0;
+
+  const embed = baseEmbed({
+    color: COLORS.gold,
+    page: 'Achievements',
+    title: 'ACHIEVEMENTS',
+    member,
+    subtitle: `${completed}/${entries.length} tamamlandı • ${percent}% koleksiyon`
+  });
+
+  embed.addFields({
+    name: '⭐  ACHIEVEMENT SCORE',
+    value:
+      `**${fmt(p.achievementPoints)} AP**\n` +
+      `${progressBar(percent, 100)}  **${percent}%**`,
+    inline: false
+  });
+
+  const lines = entries.map(([id, achievement]) => {
     const done = claimed.has(id);
     const reward = achievement.reward || {};
     const rewards = [
       reward.points ? `⭐ ${reward.points} AP` : null,
       reward.animeCoin ? `🪙 ${fmt(reward.animeCoin)}` : null,
       reward.title ? `👑 ${reward.title}` : null
-    ].filter(Boolean).join('  ');
+    ].filter(Boolean).join('  •  ');
 
-    return `${done ? '✓' : '○'} **${achievement.name}**\n` +
-      `${UI.dot} ${achievement.description}\n` +
-      `${UI.dot} ${rewards || 'Ödül bilgisi yok'}`;
+    return [
+      `${done ? '🟣' : '⚫'} **${achievement.name}**`,
+      `> ${achievement.description || 'Gizli başarı.'}`,
+      `> ${done ? 'TAMAMLANDI' : 'KİLİTLİ'}  •  ${rewards || 'Ödül bilgisi yok'}`
+    ].join('\n');
   });
 
-  return baseEmbed({
-    color: COLORS.gold,
-    title: '🏆  ACHIEVEMENTS',
-    subtitle: `**${fmt(p.achievementPoints)} AP** kazanıldı\n${UI.divider}\n${lines.join('\n\n')}`,
-    member
-  });
+  for (let i = 0; i < lines.length; i += 3) {
+    embed.addFields({
+      name: `🏆  ACHIEVEMENT SET ${Math.floor(i / 3) + 1}`,
+      value: lines.slice(i, i + 3).join('\n\n'),
+      inline: false
+    });
+  }
+
+  return embed;
 }
 
 function craftEmbed(member) {
   const p = store.getPlayer(member.guild.id, member.id);
-  const lines = Object.entries(RECIPES).map(([id, recipe]) => {
+  const recipes = Object.entries(RECIPES);
+
+  const embed = baseEmbed({
+    color: COLORS.cyan,
+    page: 'Craft',
+    title: 'CRAFT FORGE',
+    member,
+    subtitle: 'Materyalleri birleştir. Gücünü üret.'
+  });
+
+  embed.addFields({
+    name: '🪙  AVAILABLE COINS',
+    value: `**${fmt(p.coins?.animeCoin)} Anime Coin**`,
+    inline: true
+  }, {
+    name: '⚒️  RECIPES',
+    value: `**${recipes.length}** tarif`,
+    inline: true
+  });
+
+  recipes.forEach(([id, recipe]) => {
     const item = ITEMS[recipe.item] || {};
     const materials = Object.entries(recipe.materials || {})
-      .map(([material, amount]) => `${material} ×${amount}`)
-      .join('  +  ');
+      .map(([material, amount]) => `\`${material} ×${amount}\``)
+      .join('  +  ') || '`Materyal yok`';
 
-    return `**${item.name || id}**\n${UI.dot} ${materials || 'Materyal yok'}\n${UI.dot} 🪙 ${fmt(recipe.coins)} Anime Coin`;
+    embed.addFields({
+      name: `⚒️  ${item.name || id}`,
+      value:
+        `${item.description || 'Özel craft eşyası.'}\n` +
+        `**Gerekli:** ${materials}\n` +
+        `**Maliyet:** 🪙 ${fmt(recipe.coins)} Anime Coin`,
+      inline: false
+    });
   });
 
-  return baseEmbed({
-    color: COLORS.cyan,
-    title: '⚒️  CRAFT / ZANAAT',
-    subtitle: `Mevcut Anime Coin: **🪙 ${fmt(p.coins.animeCoin)}**\n${UI.divider}\n${lines.join('\n\n')}\n\nTarif seçerek üretime başlayabilirsin.`,
-    member
-  });
+  return embed;
 }
 
 function craftComponents() {
@@ -305,7 +502,7 @@ function craftComponents() {
     new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId('rpg:craft-select')
-        .setPlaceholder('Bir tarif seç')
+        .setPlaceholder('▾  Craft tarifini seç')
         .addOptions(options)
     )
   ];
@@ -313,18 +510,52 @@ function craftComponents() {
 
 function evolutionEmbed(guildId, userId, member) {
   const p = store.getPlayer(guildId, userId);
-  const next = EVOLUTIONS[p.evolution]?.next || [];
+  const current = p.evolution;
+  const next = EVOLUTIONS[current]?.next || [];
 
-  const paths = next.length
-    ? next.map(target => `**${titleCase(target)}**\n${UI.dot} Yeni güç aşaması`).join('\n\n')
-    : 'Bu aşamanın devam eden bir yolu bulunmuyor.';
+  const chain = ['human', 'hollow', 'menos', 'adjuchas', 'vasto_lorde', 'arrancar', 'espada'];
+  const currentIndex = Math.max(0, chain.indexOf(current));
 
-  return baseEmbed({
+  const chainText = chain.map((stage, index) => {
+    if (index < currentIndex) return `~~${titleCase(stage)}~~`;
+    if (index === currentIndex) return `**🟣 ${titleCase(stage)}**`;
+    return `◌ ${titleCase(stage)}`;
+  }).join('  →  ');
+
+  const embed = baseEmbed({
     color: COLORS.pink,
-    title: '🧬  POWER DEVELOPMENT',
-    subtitle: `Mevcut form\n**${titleCase(p.evolution)}**\n\n${UI.divider}\n\nSonraki gelişimler\n${paths}\n\n${UI.divider}\n⚠️ Dönüşümler görev, eşya, AP ve para şartlarına bağlıdır.`,
-    member
+    page: 'Evolution',
+    title: 'POWER DEVELOPMENT',
+    member,
+    subtitle: 'Karakterinin dönüşüm ağacını yönet.'
   });
+
+  embed.addFields({
+    name: '🧬  CURRENT FORM',
+    value:
+      `**${titleCase(current)}**\n` +
+      `${progressBar(currentIndex, Math.max(1, chain.length - 1), 14)}\n` +
+      `Aşama **${currentIndex + 1}/${chain.length}**`,
+    inline: false
+  }, {
+    name: '🌌  EVOLUTION PATH',
+    value: chainText,
+    inline: false
+  });
+
+  embed.addFields({
+    name: '✦  NEXT EVOLUTION',
+    value: next.length
+      ? next.map(target => `🟣 **${titleCase(target)}**  —  ${titleCase(current)} → ${titleCase(target)}`).join('\n')
+      : 'Bu formun tanımlı bir sonraki aşaması yok.',
+    inline: false
+  }, {
+    name: '⚠️  REQUIREMENTS',
+    value: 'Dönüşümler görev, eşya, AP, coin ve özel şartlara bağlı olabilir.',
+    inline: false
+  });
+
+  return embed;
 }
 
 function evolutionComponents(guildId, userId) {
@@ -336,7 +567,7 @@ function evolutionComponents(guildId, userId) {
     new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId('rpg:evolution-select')
-        .setPlaceholder('Gelişim seç')
+        .setPlaceholder('▾  Bir sonraki formu seç')
         .addOptions(next.slice(0, 25).map(target => ({
           label: titleCase(target),
           description: `${titleCase(p.evolution)} → ${titleCase(target)}`.slice(0, 100),
@@ -348,29 +579,95 @@ function evolutionComponents(guildId, userId) {
 
 function espadaEmbed(member) {
   const e = store.getEspada();
+  const occupied = Object.values(e.slots || {}).filter(Boolean).length;
+
+  const embed = baseEmbed({
+    color: COLORS.red,
+    page: 'Espada',
+    title: 'ESPADA  /  0—9',
+    member,
+    subtitle: `${occupied}/10 koltuk dolu • Her slot benzersizdir.`
+  });
+
   const slots = Array.from({ length: 10 }, (_, index) => {
     const slot = e.slots[String(index)];
     return slot
-      ? `**${index}**  🔴  <@${slot.userId}>`
-      : `**${index}**  🟢  BOŞ`;
+      ? `🔴  **${index}**  •  <@${slot.userId}>`
+      : `🟣  **${index}**  •  \`AVAILABLE\``;
   });
 
-  return baseEmbed({
-    color: COLORS.red,
-    title: '⚔️  ESPADA  /  0—9',
-    subtitle: `10 benzersiz koltuk. Her slot yalnızca bir oyuncuya ait olabilir.\n\n${UI.divider}\n${slots.join('\n')}\n${UI.divider}\n\n**Şart:** Hollow → Arrancar olmalısın.`,
-    member
+  embed.addFields({
+    name: '⚔️  ESPADA SEATS',
+    value: slots.slice(0, 5).join('\n') + '\n\n' + slots.slice(5).join('\n'),
+    inline: false
   });
+
+  embed.addFields({
+    name: '👑  STATUS',
+    value:
+      `**${occupied}/10** slot kullanılıyor\n` +
+      `${progressBar(occupied, 10, 10)}`,
+    inline: true
+  }, {
+    name: '🔐  REQUIREMENT',
+    value: '**Hollow → Arrancar**\nAçık slot bulunmalı.',
+    inline: true
+  });
+
+  embed.addFields({
+    name: '✦  ESPADA SYSTEM',
+    value:
+      'Her koltuk yalnızca **bir oyuncuya** verilebilir.\n' +
+      '10 slot tamamen dolduğunda yeni oyuncular Espada olamaz.',
+    inline: false
+  });
+
+  return embed;
 }
 
 function balanceEmbed(member) {
   const p = store.getPlayer(member.guild.id, member.id);
+
   return baseEmbed({
     color: COLORS.gold,
-    title: '💰  WALLET',
-    subtitle: `${UI.divider}\n\n🪙 **${fmt(p.coins.animeCoin)}** Anime Coin\n💎 **${fmt(p.coins.rareCurrency)}** Rare Currency\n🌑 **${fmt(p.coins.eventCurrency)}** Event Currency\n\n${UI.divider}\n⭐ **${fmt(p.achievementPoints)} AP**`,
-    member
-  });
+    page: 'Balance',
+    title: 'WALLET & CURRENCIES',
+    member,
+    subtitle: 'RPG ekonomindeki tüm para birimleri.'
+  }).addFields(
+    statField('🪙  ANIME COIN', `**${fmt(p.coins?.animeCoin)}**`, true),
+    statField('💎  RARE CURRENCY', `**${fmt(p.coins?.rareCurrency)}**`, true),
+    statField('🌑  EVENT CURRENCY', `**${fmt(p.coins?.eventCurrency)}**`, true),
+    statField('⭐  ACHIEVEMENT POINT', `**${fmt(p.achievementPoints)} AP**`, false)
+  );
+}
+
+
+function viewPayload(interaction, page) {
+  const member = interaction.member;
+  const guildId = interaction.guild.id;
+  const userId = interaction.user.id;
+
+  switch (page) {
+    case 'profile':
+      return { embeds: [profileEmbed(member)], components: navRows('profile') };
+    case 'inventory':
+      return { embeds: [inventoryEmbed(guildId, userId, member)], components: navRows('inventory') };
+    case 'merchant':
+      return { embeds: [merchantEmbed(member)], components: [...merchantComponents(), ...navRows('merchant')] };
+    case 'achievements':
+      return { embeds: [achievementsEmbed(guildId, userId, member)], components: navRows('achievements') };
+    case 'craft':
+      return { embeds: [craftEmbed(member)], components: [...craftComponents(), ...navRows('craft')] };
+    case 'evolution':
+      return { embeds: [evolutionEmbed(guildId, userId, member)], components: [...evolutionComponents(guildId, userId), ...navRows('evolution')] };
+    case 'espada':
+      return { embeds: [espadaEmbed(member)], components: navRows('espada') };
+    case 'balance':
+      return { embeds: [balanceEmbed(member)], components: navRows('balance') };
+    default:
+      return { embeds: [panelEmbed(member)], components: navRows() };
+  }
 }
 
 function resultEmbed(title, description, color = COLORS.green) {
@@ -520,7 +817,7 @@ function viewPayload(interaction, page) {
   }
 }
 
-async function showPanel(interaction, edit = false) {
+function showPanel(interaction, edit = false) {
   const payload = viewPayload(interaction, 'panel');
   return edit ? interaction.update(payload) : interaction.reply(payload);
 }
