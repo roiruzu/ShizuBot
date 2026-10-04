@@ -86,31 +86,29 @@ function baseEmbed({ color = COLORS.purple, title, subtitle, member, footer = UI
 }
 
 function navRows(active = 'profile') {
-  const button = (id, label, emoji, style = ButtonStyle.Secondary) =>
+  // Discord bazen emoji alanını özel emoji gibi yorumlayabiliyor.
+  // Bu nedenle panel butonlarında .setEmoji() HİÇ kullanmıyoruz.
+  // Unicode emojiler doğrudan label içinde kullanılıyor.
+  const button = (id, label, style = ButtonStyle.Secondary) =>
     new ButtonBuilder()
       .setCustomId(`rpg:${id}`)
       .setLabel(label)
-      .setEmoji(emoji)
       .setStyle(id === active ? ButtonStyle.Primary : style);
 
   return [
     new ActionRowBuilder().addComponents(
-      button('profile', 'Profil', '👤'),
-      button('inventory', 'Envanter', '🎒'),
-      button('achievements', 'Başarımlar', '🏆'),
-      button('merchant', 'Tüccar', '🏪'),
-      button('craft', 'Craft', '⚒️')
+      button('profile', '👤 Profil'),
+      button('inventory', '🎒 Envanter'),
+      button('achievements', '🏆 Başarımlar'),
+      button('merchant', '🏪 Tüccar'),
+      button('craft', '⚒️ Craft')
     ),
     new ActionRowBuilder().addComponents(
-      button('evolution', 'Gelişim', '🧬'),
-      button('espada', 'Espada', '⚔️', ButtonStyle.Danger),
-      button('balance', 'Bakiye', '💰'),
-      button('refresh', 'Yenile', '↻'),
-      new ButtonBuilder()
-        .setCustomId('rpg:panel')
-        .setLabel('Ana Panel')
-        .setEmoji('⌂')
-        .setStyle(ButtonStyle.Secondary)
+      button('evolution', '🧬 Gelişim'),
+      button('espada', '⚔️ Espada', ButtonStyle.Danger),
+      button('balance', '💰 Bakiye'),
+      button('refresh', '🔄 Yenile'),
+      button('panel', '🏠 Ana Panel')
     )
   ];
 }
