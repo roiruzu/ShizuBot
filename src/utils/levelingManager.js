@@ -1,242 +1,391 @@
-const fs = require("fs");
-const path = require("path");
+const {
+    EmbedBuilder,
+    ChannelType
+} = require("discord.js");
 
-const DATA_DIR = path.join(__dirname, "../../data");
-const DATA_FILE = path.join(DATA_DIR, "levels.json");
+const {
+    getUser,
+    updateUser,
+    addXP,
+    getRequiredTotalXP
+} = require("./levelingStore");
 
-function ensureFile() {
-    if (!fs.existsSync(DATA_DIR)) {
-        fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
+const {
+    getOrCreateLogChannel
+} = require("./logChannel");
 
-    if (!fs.existsSync(DATA_FILE)) {
-        fs.writeFileSync(
-            DATA_FILE,
-            JSON.stringify({}, null, 2),
-            "utf8"
-        );
-    }
+const logger = require("./logger");
+
+// ===============================
+// AYARLAR
+// ===============================
+
+const MESSAGE_MIN_XP = 15;
+const MESSAGE_MAX_XP = 25;
+const MESSAGE_COOLDOWN = 60 * 1000;
+
+const VOICE_XP = 10;
+const VOICE_INTERVAL = 60 * 1000;
+
+// Level → Rol
+const LEVEL_ROLES = {
+    5: "Level 5",
+    10: "Level 10",
+    20: "Level 20",
+    30: "Level 30",
+    50: "Level 50",
+    75: "Level 75",
+    100: "Level 100"
+};
+
+// ===============================
+// RANDOM XP
+// ===============================
+
+function randomXP(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function readData() {
-    ensureFile();
+// ===============================
+// MESAJ XP
+// ===============================
 
-    try {
-        return JSON.parse(
-            fs.readFileSync(DATA_FILE, "utf8")
-        );
-    } catch {
-        return {};
-    }
-}
+async function handleMessageXP(message) {
+    if (!message.guild) return;
+    if (message.author.bot) return;
 
-function writeData(data) {
-    ensureFile();
+    const content = message.content?.replace(/\s+/g, "").trim();
 
-    const tempFile = `${DATA_FILE}.tmp`;
+    if (!content || content.length < 2) return;
 
-    fs.writeFileSync(
-        tempFile,
-        JSON.stringify(data, null, 2),
-        "utf8"
-    );
+    const guildId = message.guild.id;
+    const userId = message.author.id;
 
-    fs.renameSync(
-        tempFile,
-        DATA_FILE
-    );
-}
+    const user = getUser(guildId, userId);
 
-function createDefaultUser() {
-    return {
-        xp: 0,
-        level: 0,
-        totalMessages: 0,
-        voiceMinutes: 0,
-        lastMessageXP: 0,
-        lastVoiceXP: 0
-    };
-}
+    const now = Date.now();
 
-function getUser(guildId, userId) {
-
-    const data = readData();
-
-    if (!data[guildId]) {
-        data[guildId] = {};
-    }
-
-    if (!data[guildId][userId]) {
-
-        data[guildId][userId] =
-            createDefaultUser();
-
-        writeData(data);
-    }
-
-    return data[guildId][userId];
-}
-
-function updateUser(
-    guildId,
-    userId,
-    updates
-) {
-
-    const data = readData();
-
-    if (!data[guildId]) {
-        data[guildId] = {};
-    }
-
-    if (!data[guildId][userId]) {
-        data[guildId][userId] =
-            createDefaultUser();
-    }
-
-    data[guildId][userId] = {
-        ...data[guildId][userId],
-        ...updates
-    };
-
-    writeData(data);
-
-    return data[guildId][userId];
-}
-
-/*
-    Level sistemi:
-
-    Level 0 -> 0 XP
-    Level 1 -> 100 XP
-    Level 2 -> 283 XP
-    Level 3 -> 519 XP
-    ...
-
-    Her level için gereken toplam XP:
-    100 * level ^ 1.5
-*/
-
-function getRequiredTotalXP(level) {
-
-    if (level <= 0) {
-        return 0;
-    }
-
-    return Math.floor(
-        100 * Math.pow(level, 1.5)
-    );
-}
-
-function calculateLevel(xp) {
-
-    if (!xp || xp <= 0) {
-        return 0;
-    }
-
-    let level = 0;
-
-    while (
-        level < 1000 &&
-        xp >= getRequiredTotalXP(level + 1)
+    // 60 saniye cooldown
+    if (
+        user.lastMessageXP &&
+        now - user.lastMessageXP < MESSAGE_COOLDOWN
     ) {
-        level++;
+        return;
     }
 
-    return level;
-}
+    const xp = randomXP(
+        MESSAGE_MIN_XP,
+        MESSAGE_MAX_XP
+    );
 
-function addXP(
-    guildId,
-    userId,
-    amount
-) {
-
-    const user =
-        getUser(
-            guildId,
-            userId
-        );
-
-    const oldLevel =
-        calculateLevel(user.xp);
-
-    user.xp += amount;
-
-    const newLevel =
-        calculateLevel(user.xp);
-
-    user.level =
-        newLevel;
+    const result = addXP(
+        guildId,
+        userId,
+        xp
+    );
 
     updateUser(
         guildId,
         userId,
-        user
+        {
+            totalMessages: (result.totalMessages || 0) + 1,
+            lastMessageXP: now
+        }
     );
+
+    if (result.leveledUp) {
+        await handleLevelUp(
+            message.guild,
+            message.member,
+            result.oldLevel,
+            result.newLevel
+        );
+    }
+}
+
+// ===============================
+// LEVEL UP
+// ===============================
+
+async function handleLevelUp(
+    guild,
+    member,
+    oldLevel,
+    newLevel
+) {
+    try {
+        logger.info(
+            `${member.user.tag} Level ${newLevel} oldu.`
+        );
+
+        // Level rolü
+        const roleName = LEVEL_ROLES[newLevel];
+
+        if (roleName) {
+            let role = guild.roles.cache.find(
+                r => r.name === roleName
+            );
+
+            // Rol yoksa oluştur
+            if (!role) {
+                try {
+                    role = await guild.roles.create({
+                        name: roleName,
+                        reason: `Shizu XP sistemi - Level ${newLevel}`
+                    });
+
+                    logger.info(
+                        `Yeni level rolü oluşturuldu: ${roleName}`
+                    );
+                } catch (error) {
+                    logger.error(
+                        `Level rolü oluşturulamadı: ${error.message}`
+                    );
+                }
+            }
+
+            // Rol botun altında ise ver
+            if (
+                role &&
+                guild.members.me &&
+                role.position < guild.members.me.roles.highest.position
+            ) {
+                try {
+                    await member.roles.add(
+                        role,
+                        `Level ${newLevel} ödülü`
+                    );
+
+                    logger.info(
+                        `${member.user.tag} kullanıcısına ${roleName} verildi.`
+                    );
+                } catch (error) {
+                    logger.error(
+                        `Level rolü verilemedi: ${error.message}`
+                    );
+                }
+            }
+        }
+
+        // Kullanıcıya DM
+        try {
+            const embed = new EmbedBuilder()
+                .setColor(0x5865F2)
+                .setTitle("🎉 LEVEL ATLADIN!")
+                .setDescription(
+                    `Tebrikler **${member.user.username}**!\n\n` +
+                    `✨ Yeni seviyen: **Level ${newLevel}**\n\n` +
+                    `Shizu ile sohbet etmeye devam et! 💜`
+                )
+                .setTimestamp();
+
+            await member.send({
+                embeds: [embed]
+            });
+        } catch {
+            // DM kapalıysa hata verme
+        }
+
+        // Log kanalı
+        try {
+            const logChannel =
+                await getOrCreateLogChannel(guild);
+
+            if (logChannel) {
+                const logEmbed = new EmbedBuilder()
+                    .setColor(0x57F287)
+                    .setTitle("🎉 Level Atlandı")
+                    .addFields(
+                        {
+                            name: "👤 Kullanıcı",
+                            value: `${member} (${member.user.tag})`,
+                            inline: true
+                        },
+                        {
+                            name: "📊 Eski Level",
+                            value: `${oldLevel}`,
+                            inline: true
+                        },
+                        {
+                            name: "🚀 Yeni Level",
+                            value: `${newLevel}`,
+                            inline: true
+                        }
+                    )
+                    .setTimestamp();
+
+                await logChannel.send({
+                    embeds: [logEmbed]
+                });
+            }
+        } catch (error) {
+            logger.error(
+                `Level log gönderilemedi: ${error.message}`
+            );
+        }
+
+    } catch (error) {
+        logger.error(
+            `Level up hatası: ${error.message}`
+        );
+    }
+}
+
+// ===============================
+// VOICE XP
+// ===============================
+
+async function handleVoiceXP(client) {
+    if (!client || !client.guilds) return;
+
+    for (const guild of client.guilds.cache.values()) {
+        try {
+            // Sunucudaki voice kanallarını kontrol et
+            const voiceChannels = guild.channels.cache.filter(
+                channel =>
+                    channel.type === ChannelType.GuildVoice ||
+                    channel.type === ChannelType.GuildStageVoice
+            );
+
+            for (const channel of voiceChannels.values()) {
+
+                // AFK kanalında XP verme
+                if (guild.afkChannelId === channel.id) {
+                    continue;
+                }
+
+                // Kanaldaki üyeler
+                for (const member of channel.members.values()) {
+
+                    // Botlara XP verme
+                    if (member.user.bot) continue;
+
+                    // Kullanıcı gerçekten voice'da mı?
+                    if (!member.voice.channelId) continue;
+
+                    // Mikrofon kapalıysa XP yok
+                    if (member.voice.selfMute) continue;
+
+                    // Kullanıcı sağırlaştırılmışsa XP yok
+                    if (member.voice.selfDeaf) continue;
+
+                    // Sunucu tarafından mute
+                    if (member.voice.serverMute) continue;
+
+                    // Sunucu tarafından deaf
+                    if (member.voice.serverDeaf) continue;
+
+                    // Tek başına voice'da ise XP yok
+                    if (channel.members.size < 2) continue;
+
+                    const guildId = guild.id;
+                    const userId = member.id;
+
+                    const user = getUser(
+                        guildId,
+                        userId
+                    );
+
+                    const now = Date.now();
+
+                    // Son voice XP kontrolü
+                    if (
+                        user.lastVoiceXP &&
+                        now - user.lastVoiceXP < VOICE_INTERVAL
+                    ) {
+                        continue;
+                    }
+
+                    // 10 XP ver
+                    const result = addXP(
+                        guildId,
+                        userId,
+                        VOICE_XP
+                    );
+
+                    updateUser(
+                        guildId,
+                        userId,
+                        {
+                            voiceMinutes:
+                                (result.voiceMinutes || 0) + 1,
+
+                            lastVoiceXP: now
+                        }
+                    );
+
+                    logger.debug(
+                        `${member.user.tag} voice XP aldı: +${VOICE_XP}`
+                    );
+
+                    // Level atladıysa
+                    if (result.leveledUp) {
+                        await handleLevelUp(
+                            guild,
+                            member,
+                            result.oldLevel,
+                            result.newLevel
+                        );
+                    }
+                }
+            }
+
+        } catch (error) {
+            logger.error(
+                `Voice XP sunucu hatası (${guild.name}): ${error.message}`
+            );
+        }
+    }
+}
+
+// ===============================
+// RANK BİLGİSİ
+// ===============================
+
+function getRankInfo(guildId, userId) {
+    const user = getUser(
+        guildId,
+        userId
+    );
+
+    const level = user.level || 0;
+
+    const currentLevelXP =
+        getRequiredTotalXP(level);
+
+    const nextLevelXP =
+        getRequiredTotalXP(level + 1);
+
+    const xpInLevel =
+        Math.max(
+            0,
+            (user.xp || 0) - currentLevelXP
+        );
+
+    const xpNeeded =
+        Math.max(
+            0,
+            nextLevelXP - (user.xp || 0)
+        );
 
     return {
         ...user,
-        oldLevel,
-        newLevel,
-        leveledUp:
-            newLevel > oldLevel
+        level,
+        currentLevelXP,
+        nextLevelXP,
+        xpInLevel,
+        xpNeeded
     };
 }
 
-function getAllUsers(guildId) {
-
-    const data = readData();
-
-    return data[guildId] || {};
-}
-
-function getLeaderboard(guildId) {
-
-    const users =
-        getAllUsers(guildId);
-
-    return Object.entries(users)
-        .map(([userId, user]) => ({
-            userId,
-            ...user
-        }))
-        .sort((a, b) => {
-
-            if (b.level !== a.level) {
-                return b.level - a.level;
-            }
-
-            return b.xp - a.xp;
-        });
-}
-
-function getUserRank(
-    guildId,
-    userId
-) {
-
-    const leaderboard =
-        getLeaderboard(guildId);
-
-    const index =
-        leaderboard.findIndex(
-            user =>
-                user.userId === userId
-        );
-
-    return index === -1
-        ? null
-        : index + 1;
-}
+// ===============================
+// EXPORT
+// ===============================
 
 module.exports = {
-    getUser,
-    updateUser,
-    addXP,
-    calculateLevel,
-    getRequiredTotalXP,
-    getAllUsers,
-    getLeaderboard,
-    getUserRank
+    handleMessageXP,
+    handleVoiceXP,
+    handleLevelUp,
+    getRankInfo,
+    LEVEL_ROLES
 };
