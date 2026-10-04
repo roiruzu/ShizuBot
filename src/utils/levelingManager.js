@@ -1,12 +1,15 @@
 const {
-    EmbedBuilder
+    EmbedBuilder,
+    PermissionsBitField
 } = require("discord.js");
 
 const {
     getUser,
-    addXP,
+    addChatXP,
+    addVoiceXP,
     getRequiredTotalXP,
-    getUserRank
+    getChatRank,
+    getVoiceRank
 } = require("./levelingStore");
 
 const {
@@ -38,7 +41,7 @@ const VOICE_INTERVAL =
 
 /*
 ==================================================
-ROL LEVEL'LERİ
+ROLLER
 ==================================================
 */
 
@@ -74,16 +77,23 @@ function randomXP(min, max) {
 
 /*
 ==================================================
-EN YÜKSEK ROL LEVEL'İ
+EN YÜKSEK ROL
 ==================================================
 */
 
 function getHighestRoleLevel(level) {
     let highest = 0;
 
-    for (const roleLevel of LEVEL_ROLE_LEVELS) {
-        if (level >= roleLevel) {
-            highest = roleLevel;
+    for (
+        const roleLevel
+        of LEVEL_ROLE_LEVELS
+    ) {
+        if (
+            level >=
+            roleLevel
+        ) {
+            highest =
+                roleLevel;
         }
     }
 
@@ -92,258 +102,412 @@ function getHighestRoleLevel(level) {
 
 /*
 ==================================================
-LEVEL ROLLERİNİ GÜNCELLE
+ROL GÜNCELLEME
 ==================================================
 */
 
 async function updateLevelRoles(
     guild,
     member,
-    level
+    chatLevel,
+    voiceLevel
 ) {
     try {
         if (!guild || !member) {
             return;
         }
 
-        const highestLevel =
-            getHighestRoleLevel(level);
+        const highestChat =
+            getHighestRoleLevel(
+                chatLevel
+            );
 
-        /*
-            Kullanıcının mevcut
-            Chat + [X] ve Sesli + [X]
-            rollerini bul.
-        */
+        const highestVoice =
+            getHighestRoleLevel(
+                voiceLevel
+            );
 
-        const currentLevelRoles =
-            member.roles.cache.filter(role => {
-                return (
-                    /^Chat \+ \[\d+\]$/.test(
-                        role.name
-                    ) ||
-                    /^Sesli \+ \[\d+\]$/.test(
-                        role.name
-                    )
-                );
-            });
-
-        /*
-            Hedef roller
-        */
-
-        const targetChatRoleName =
-            highestLevel > 0
-                ? `Chat + [${highestLevel}]`
+        const targetChatRole =
+            highestChat > 0
+                ? `Chat + [${highestChat}]`
                 : null;
 
-        const targetVoiceRoleName =
-            highestLevel > 0
-                ? `Sesli + [${highestLevel}]`
+        const targetVoiceRole =
+            highestVoice > 0
+                ? `Sesli + [${highestVoice}]`
                 : null;
 
         /*
-            Eski level rollerini kaldır.
-            Hedef roller hariç tutulur.
+        ==========================================
+        ESKİ CHAT ROLLERİ
+        ==========================================
         */
 
-        for (const role of currentLevelRoles.values()) {
+        const oldChatRoles =
+            member.roles.cache.filter(
+                role =>
+                    /^Chat \+ \[\d+\]$/
+                        .test(
+                            role.name
+                        )
+            );
+
+        for (
+            const role
+            of oldChatRoles.values()
+        ) {
             if (
                 role.name !==
-                    targetChatRoleName &&
-                role.name !==
-                    targetVoiceRoleName
+                targetChatRole
             ) {
                 try {
                     await member.roles.remove(
                         role,
-                        "Level rolü güncellendi."
+                        "Chat level rolü güncellendi."
                     );
                 } catch (error) {
                     logger.warn(
-                        `⚠️ ${member.user.tag} kullanıcısından ${role.name} rolü kaldırılamadı: ${error.message}`
+                        `⚠️ Chat rolü kaldırılamadı: ${error.message}`
                     );
                 }
             }
         }
 
         /*
-            Level 0 ise rol verme.
+        ==========================================
+        ESKİ SESLİ ROLLERİ
+        ==========================================
         */
 
-        if (highestLevel <= 0) {
-            return;
+        const oldVoiceRoles =
+            member.roles.cache.filter(
+                role =>
+                    /^Sesli \+ \[\d+\]$/
+                        .test(
+                            role.name
+                        )
+            );
+
+        for (
+            const role
+            of oldVoiceRoles.values()
+        ) {
+            if (
+                role.name !==
+                targetVoiceRole
+            ) {
+                try {
+                    await member.roles.remove(
+                        role,
+                        "Sesli level rolü güncellendi."
+                    );
+                } catch (error) {
+                    logger.warn(
+                        `⚠️ Sesli rolü kaldırılamadı: ${error.message}`
+                    );
+                }
+            }
         }
 
         /*
-            CHAT ROLÜ
+        ==========================================
+        CHAT ROLE
+        ==========================================
         */
 
-        const chatRole =
-            guild.roles.cache.find(
-                role =>
-                    role.name ===
-                    targetChatRoleName
-            );
+        if (highestChat > 0) {
+            const chatRole =
+                guild.roles.cache.find(
+                    role =>
+                        role.name ===
+                        targetChatRole
+                );
 
-        if (!chatRole) {
-            logger.warn(
-                `⚠️ ${targetChatRoleName} rolü bulunamadı.`
-            );
-        } else {
-            if (
+            if (!chatRole) {
+                logger.warn(
+                    `⚠️ ${targetChatRole} bulunamadı.`
+                );
+            } else if (
+                chatRole.position >=
+                guild.members.me.roles.highest.position
+            ) {
+                logger.warn(
+                    `⚠️ ${targetChatRole} bot rolünün üstünde.`
+                );
+            } else if (
                 !member.roles.cache.has(
                     chatRole.id
                 )
             ) {
-                if (
-                    chatRole.position <
-                    guild.members.me.roles.highest.position
-                ) {
-                    try {
-                        await member.roles.add(
-                            chatRole,
-                            "Level rolü verildi."
-                        );
-                    } catch (error) {
-                        logger.warn(
-                            `⚠️ ${member.user.tag} kullanıcısına ${chatRole.name} verilemedi: ${error.message}`
-                        );
-                    }
-                } else {
+                try {
+                    await member.roles.add(
+                        chatRole,
+                        "Chat level rolü verildi."
+                    );
+                } catch (error) {
                     logger.warn(
-                        `⚠️ ${chatRole.name} rolü botun rolünden yukarıda.`
+                        `⚠️ ${targetChatRole} verilemedi: ${error.message}`
                     );
                 }
             }
         }
 
         /*
-            SESLİ ROLÜ
+        ==========================================
+        SESLİ ROLE
+        ==========================================
         */
 
-        const voiceRole =
-            guild.roles.cache.find(
-                role =>
-                    role.name ===
-                    targetVoiceRoleName
-            );
+        if (highestVoice > 0) {
+            const voiceRole =
+                guild.roles.cache.find(
+                    role =>
+                        role.name ===
+                        targetVoiceRole
+                );
 
-        if (!voiceRole) {
-            logger.warn(
-                `⚠️ ${targetVoiceRoleName} rolü bulunamadı.`
-            );
-        } else {
-            if (
+            if (!voiceRole) {
+                logger.warn(
+                    `⚠️ ${targetVoiceRole} bulunamadı.`
+                );
+            } else if (
+                voiceRole.position >=
+                guild.members.me.roles.highest.position
+            ) {
+                logger.warn(
+                    `⚠️ ${targetVoiceRole} bot rolünün üstünde.`
+                );
+            } else if (
                 !member.roles.cache.has(
                     voiceRole.id
                 )
             ) {
-                if (
-                    voiceRole.position <
-                    guild.members.me.roles.highest.position
-                ) {
-                    try {
-                        await member.roles.add(
-                            voiceRole,
-                            "Level rolü verildi."
-                        );
-                    } catch (error) {
-                        logger.warn(
-                            `⚠️ ${member.user.tag} kullanıcısına ${voiceRole.name} verilemedi: ${error.message}`
-                        );
-                    }
-                } else {
+                try {
+                    await member.roles.add(
+                        voiceRole,
+                        "Sesli level rolü verildi."
+                    );
+                } catch (error) {
                     logger.warn(
-                        `⚠️ ${voiceRole.name} rolü botun rolünden yukarıda.`
+                        `⚠️ ${targetVoiceRole} verilemedi: ${error.message}`
                     );
                 }
             }
         }
     } catch (error) {
         logger.error(
-            `❌ Level rolleri güncellenirken hata: ${error.stack || error.message}`
+            `❌ Level rolleri güncellenirken hata: ${
+                error.stack ||
+                error.message
+            }`
         );
     }
 }
 
 /*
 ==================================================
-LEVEL UP MESAJI
+LEVEL UP BİLDİRİMİ
+==================================================
+*/
+
+async function sendLevelUpNotification(
+    guild,
+    member,
+    type,
+    oldLevel,
+    newLevel
+) {
+    try {
+        /*
+        ==========================================
+        KANALI FETCH ET
+        ==========================================
+        */
+
+        let channel =
+            guild.channels.cache.get(
+                LEVEL_UP_CHANNEL_ID
+            );
+
+        if (!channel) {
+            try {
+                channel =
+                    await guild.channels.fetch(
+                        LEVEL_UP_CHANNEL_ID
+                    );
+            } catch (error) {
+                logger.error(
+                    `❌ Level bildirim kanalı alınamadı (${LEVEL_UP_CHANNEL_ID}): ${error.message}`
+                );
+                return;
+            }
+        }
+
+        if (!channel) {
+            logger.error(
+                `❌ Level bildirim kanalı bulunamadı: ${LEVEL_UP_CHANNEL_ID}`
+            );
+            return;
+        }
+
+        /*
+        ==========================================
+        KANAL YETKİSİ
+        ==========================================
+        */
+
+        const botMember =
+            guild.members.me;
+
+        if (!botMember) {
+            logger.error(
+                "❌ Bot guild member bulunamadı."
+            );
+            return;
+        }
+
+        const permissions =
+            channel.permissionsFor(
+                botMember
+            );
+
+        if (
+            !permissions ||
+            !permissions.has(
+                PermissionsBitField.Flags.ViewChannel
+            ) ||
+            !permissions.has(
+                PermissionsBitField.Flags.SendMessages
+            ) ||
+            !permissions.has(
+                PermissionsBitField.Flags.EmbedLinks
+            )
+        ) {
+            logger.error(
+                `❌ Level kanalında botun gerekli yetkileri yok: ${LEVEL_UP_CHANNEL_ID}`
+            );
+            return;
+        }
+
+        /*
+        ==========================================
+        TÜR
+        ==========================================
+        */
+
+        const isChat =
+            type === "chat";
+
+        const title =
+            isChat
+                ? "💬 CHAT LEVEL ATLANDI!"
+                : "🎧 SESLİ LEVEL ATLANDI!";
+
+        const levelName =
+            isChat
+                ? "Chat Level"
+                : "Sesli Level";
+
+        /*
+        ==========================================
+        EMBED
+        ==========================================
+        */
+
+        const embed =
+            new EmbedBuilder()
+                .setColor(
+                    isChat
+                        ? 0x8b5cf6
+                        : 0x6366f1
+                )
+                .setTitle(title)
+                .setDescription(
+                    `🎉 ${member} **${levelName} ${newLevel}** seviyesine ulaştı!`
+                )
+                .addFields(
+                    {
+                        name:
+                            "📉 Eski Level",
+                        value:
+                            `**${oldLevel}**`,
+                        inline: true
+                    },
+                    {
+                        name:
+                            "📈 Yeni Level",
+                        value:
+                            `**${newLevel}**`,
+                        inline: true
+                    },
+                    {
+                        name:
+                            "🏆 Sistem",
+                        value:
+                            isChat
+                                ? "Chat XP"
+                                : "Sesli XP",
+                        inline: true
+                    }
+                )
+                .setThumbnail(
+                    member.user.displayAvatarURL(
+                        {
+                            extension: "png",
+                            size: 256
+                        }
+                    )
+                )
+                .setFooter({
+                    text:
+                        "Shizu • Level Sistemi"
+                })
+                .setTimestamp();
+
+        /*
+        ==========================================
+        MESAJ GÖNDER
+        ==========================================
+        */
+
+        await channel.send({
+            embeds: [embed]
+        });
+
+        logger.info(
+            `✅ Level bildirimi gönderildi: ${member.user.tag} | ${type} | ${oldLevel} -> ${newLevel}`
+        );
+    } catch (error) {
+        logger.error(
+            `❌ Level bildirim gönderme hatası: ${
+                error.stack ||
+                error.message
+            }`
+        );
+    }
+}
+
+/*
+==================================================
+LEVEL UP
 ==================================================
 */
 
 async function handleLevelUp(
     guild,
     member,
+    type,
     oldLevel,
     newLevel
 ) {
     try {
-        if (
-            !guild ||
-            !member ||
-            newLevel <= oldLevel
-        ) {
-            return;
-        }
-
-        /*
-            Önce rolleri güncelle
-        */
-
-        await updateLevelRoles(
+        await sendLevelUpNotification(
             guild,
             member,
+            type,
+            oldLevel,
             newLevel
         );
-
-        /*
-            Level up kanalı
-        */
-
-        const channel =
-            guild.channels.cache.get(
-                LEVEL_UP_CHANNEL_ID
-            );
-
-        if (channel) {
-            const embed =
-                new EmbedBuilder()
-                    .setColor(0x8b5cf6)
-                    .setTitle("✨ LEVEL ATLANDI!")
-                    .setDescription(
-                        `🎉 ${member} **Level ${newLevel}** seviyesine ulaştı!`
-                    )
-                    .addFields(
-                        {
-                            name: "📈 Eski Level",
-                            value:
-                                `**${oldLevel}**`,
-                            inline: true
-                        },
-                        {
-                            name: "🌙 Yeni Level",
-                            value:
-                                `**${newLevel}**`,
-                            inline: true
-                        }
-                    )
-                    .setThumbnail(
-                        member.user.displayAvatarURL({
-                            extension: "png",
-                            size: 256
-                        })
-                    )
-                    .setFooter({
-                        text:
-                            "Shizu • Level Sistemi"
-                    })
-                    .setTimestamp();
-
-            await channel.send({
-                embeds: [embed]
-            });
-        }
 
         /*
             DM
@@ -351,48 +515,16 @@ async function handleLevelUp(
 
         try {
             await member.send(
-                `✨ Tebrikler! **${guild.name}** sunucusunda **Level ${newLevel}** oldun!`
+                `🎉 **${guild.name}** sunucusunda ${type === "chat" ? "💬 Chat" : "🎧 Sesli"} Level'in **${newLevel}** oldu!`
             );
         } catch {
             /*
-                DM kapalıysa sorun değil.
+                DM kapalı olabilir.
             */
-        }
-
-        /*
-            Genel log kanalı
-        */
-
-        try {
-            const logChannel =
-                await getOrCreateLogChannel(
-                    guild
-                );
-
-            if (logChannel) {
-                const embed =
-                    new EmbedBuilder()
-                        .setColor(0x8b5cf6)
-                        .setTitle(
-                            "📈 Level Atlandı"
-                        )
-                        .setDescription(
-                            `${member} **Level ${oldLevel} → Level ${newLevel}**`
-                        )
-                        .setTimestamp();
-
-                await logChannel.send({
-                    embeds: [embed]
-                });
-            }
-        } catch (error) {
-            logger.warn(
-                `⚠️ Level log gönderilemedi: ${error.message}`
-            );
         }
     } catch (error) {
         logger.error(
-            `❌ Level up sistemi hatası: ${error.stack || error.message}`
+            `❌ Level up işlemi hatası: ${error.message}`
         );
     }
 }
@@ -436,7 +568,8 @@ async function handleMessageXP(
 
         if (
             user.lastMessageXP &&
-            now - user.lastMessageXP <
+            now -
+                user.lastMessageXP <
                 MESSAGE_XP_COOLDOWN
         ) {
             return;
@@ -449,28 +582,14 @@ async function handleMessageXP(
             );
 
         const result =
-            addXP(
+            addChatXP(
                 guildId,
                 userId,
                 amount
             );
 
         /*
-            Mesaj sayısını artır
-        */
-
-        result.totalMessages =
-            (result.totalMessages || 0) + 1;
-
-        /*
-            XP zamanını güncelle
-        */
-
-        result.lastMessageXP =
-            now;
-
-        /*
-            Store'a kaydet
+            Mesaj sayısı
         */
 
         const {
@@ -482,61 +601,69 @@ async function handleMessageXP(
             userId,
             {
                 totalMessages:
-                    result.totalMessages,
+                    (user.totalMessages || 0) + 1,
+
                 lastMessageXP:
-                    result.lastMessageXP
+                    now
             }
         );
 
         /*
-            Level up
+            Güncel kullanıcı
+        */
+
+        const updatedUser =
+            getUser(
+                guildId,
+                userId
+            );
+
+        /*
+            Chat rollerini güncelle
+        */
+
+        const member =
+            message.guild.members.cache.get(
+                userId
+            );
+
+        if (member) {
+            await updateLevelRoles(
+                message.guild,
+                member,
+                updatedUser.chatLevel,
+                updatedUser.voiceLevel
+            );
+        }
+
+        /*
+            Chat level up
         */
 
         if (result.leveledUp) {
-            const member =
-                message.guild.members.cache.get(
-                    userId
-                );
-
-            if (member) {
-                await handleLevelUp(
-                    message.guild,
-                    member,
-                    result.oldLevel,
-                    result.newLevel
-                );
-            }
-        } else {
-            /*
-                Normal XP kazanımında da
-                roller eksikse düzelt.
-            */
-
-            const member =
-                message.guild.members.cache.get(
-                    userId
-                );
-
-            if (member) {
-                await updateLevelRoles(
-                    message.guild,
-                    member,
-                    result.newLevel
-                );
-            }
+            await handleLevelUp(
+                message.guild,
+                member,
+                "chat",
+                result.oldLevel,
+                result.newLevel
+            );
         }
 
         return result;
     } catch (error) {
         logger.error(
-            `❌ Mesaj XP hatası: ${error.stack || error.message}`
+            `❌ Chat XP hatası: ${
+                error.stack ||
+                error.message
+            }`
         );
     }
 }
 
 /*
 ==================================================
-VOICE XP
+SES XP
 ==================================================
 */
 
@@ -544,8 +671,20 @@ async function handleVoiceXP(
     client
 ) {
     try {
-        for (const guild of client.guilds.cache.values()) {
-            for (const member of guild.members.cache.values()) {
+        for (
+            const guild
+            of client.guilds.cache.values()
+        ) {
+            for (
+                const member
+                of guild.members.cache.values()
+            ) {
+                if (
+                    member.user.bot
+                ) {
+                    continue;
+                }
+
                 if (
                     !member.voice ||
                     !member.voice.channel
@@ -553,13 +692,9 @@ async function handleVoiceXP(
                     continue;
                 }
 
-                if (member.user.bot) {
-                    continue;
-                }
-
                 /*
-                    Mikrofon kapalıysa XP yok.
-                    Sağır/deaf ise XP yok.
+                    Mikrofon veya kulaklık kapalıysa
+                    XP verme.
                 */
 
                 if (
@@ -588,24 +723,19 @@ async function handleVoiceXP(
 
                 if (
                     user.lastVoiceXP &&
-                    now - user.lastVoiceXP <
+                    now -
+                        user.lastVoiceXP <
                         VOICE_INTERVAL
                 ) {
                     continue;
                 }
 
                 const result =
-                    addXP(
+                    addVoiceXP(
                         guildId,
                         userId,
                         VOICE_XP_PER_MINUTE
                     );
-
-                result.voiceMinutes =
-                    (result.voiceMinutes || 0) + 1;
-
-                result.lastVoiceXP =
-                    now;
 
                 const {
                     updateUser
@@ -616,23 +746,40 @@ async function handleVoiceXP(
                     userId,
                     {
                         voiceMinutes:
-                            result.voiceMinutes,
+                            (user.voiceMinutes || 0) + 1,
+
                         lastVoiceXP:
-                            result.lastVoiceXP
+                            now
                     }
                 );
+
+                const updatedUser =
+                    getUser(
+                        guildId,
+                        userId
+                    );
+
+                /*
+                    Rolleri güncelle
+                */
+
+                await updateLevelRoles(
+                    guild,
+                    member,
+                    updatedUser.chatLevel,
+                    updatedUser.voiceLevel
+                );
+
+                /*
+                    Sesli level up
+                */
 
                 if (result.leveledUp) {
                     await handleLevelUp(
                         guild,
                         member,
+                        "voice",
                         result.oldLevel,
-                        result.newLevel
-                    );
-                } else {
-                    await updateLevelRoles(
-                        guild,
-                        member,
                         result.newLevel
                     );
                 }
@@ -640,14 +787,17 @@ async function handleVoiceXP(
         }
     } catch (error) {
         logger.error(
-            `❌ Ses XP sistemi hatası: ${error.stack || error.message}`
+            `❌ Ses XP hatası: ${
+                error.stack ||
+                error.message
+            }`
         );
     }
 }
 
 /*
 ==================================================
-RANK BİLGİSİ
+RANK
 ==================================================
 */
 
@@ -661,80 +811,172 @@ function getRankInfo(
             userId
         );
 
-    const level =
-        user.level || 0;
+    const chatLevel =
+        user.chatLevel || 0;
 
-    const totalXP =
-        user.xp || 0;
+    const voiceLevel =
+        user.voiceLevel || 0;
 
-    const currentLevelXP =
-        getRequiredTotalXP(level);
+    const chatXP =
+        user.chatXP || 0;
 
-    const nextLevelXP =
+    const voiceXP =
+        user.voiceXP || 0;
+
+    const chatCurrentXP =
         getRequiredTotalXP(
-            level + 1
+            chatLevel
         );
 
-    const xpInLevel =
+    const chatNextXP =
+        getRequiredTotalXP(
+            chatLevel + 1
+        );
+
+    const voiceCurrentXP =
+        getRequiredTotalXP(
+            voiceLevel
+        );
+
+    const voiceNextXP =
+        getRequiredTotalXP(
+            voiceLevel + 1
+        );
+
+    const chatXPInLevel =
         Math.max(
             0,
-            totalXP - currentLevelXP
+            chatXP -
+                chatCurrentXP
         );
 
-    const xpNeeded =
+    const voiceXPInLevel =
         Math.max(
             0,
-            nextLevelXP - totalXP
+            voiceXP -
+                voiceCurrentXP
         );
 
-    const levelXPRange =
+    const chatRange =
         Math.max(
             1,
-            nextLevelXP -
-                currentLevelXP
+            chatNextXP -
+                chatCurrentXP
         );
 
-    const progress =
-        Math.min(
-            100,
-            Math.max(
-                0,
-                (xpInLevel /
-                    levelXPRange) *
-                    100
-            )
+    const voiceRange =
+        Math.max(
+            1,
+            voiceNextXP -
+                voiceCurrentXP
         );
 
     return {
         ...user,
 
-        level,
+        /*
+            CHAT
+        */
 
-        xp: totalXP,
+        chatLevel,
+        chatXP,
 
-        rank:
-            getUserRank(
+        chatRank:
+            getChatRank(
                 guildId,
                 userId
             ),
 
-        currentLevelXP,
+        chatCurrentXP,
+        chatNextXP,
 
-        nextLevelXP,
+        chatXPInLevel,
 
-        xpInLevel,
+        chatXPNeeded:
+            Math.max(
+                0,
+                chatNextXP -
+                    chatXP
+            ),
 
-        xpNeeded,
+        chatProgress:
+            Math.min(
+                100,
+                Math.max(
+                    0,
+                    (
+                        chatXPInLevel /
+                        chatRange
+                    ) * 100
+                )
+            ),
 
-        progress
+        /*
+            SESLİ
+        */
+
+        voiceLevel,
+        voiceXP,
+
+        voiceRank:
+            getVoiceRank(
+                guildId,
+                userId
+            ),
+
+        voiceCurrentXP,
+        voiceNextXP,
+
+        voiceXPInLevel,
+
+        voiceXPNeeded:
+            Math.max(
+                0,
+                voiceNextXP -
+                    voiceXP
+            ),
+
+        voiceProgress:
+            Math.min(
+                100,
+                Math.max(
+                    0,
+                    (
+                        voiceXPInLevel /
+                        voiceRange
+                    ) * 100
+                )
+            ),
+
+        /*
+            UYUMLULUK
+        */
+
+        level:
+            chatLevel,
+
+        xp:
+            chatXP,
+
+        rank:
+            getChatRank(
+                guildId,
+                userId
+            ),
+
+        progress:
+            Math.min(
+                100,
+                Math.max(
+                    0,
+                    (
+                        chatXPInLevel /
+                        chatRange
+                    ) * 100
+                )
+            )
     };
 }
-
-/*
-==================================================
-EXPORT
-==================================================
-*/
 
 module.exports = {
     handleMessageXP,

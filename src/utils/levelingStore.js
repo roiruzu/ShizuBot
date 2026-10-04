@@ -47,16 +47,37 @@ function writeData(data) {
     );
 }
 
+/*
+==================================================
+DEFAULT USER
+==================================================
+*/
+
 function createDefaultUser() {
     return {
-        xp: 0,
-        level: 0,
+        /*
+            CHAT
+        */
+        chatXP: 0,
+        chatLevel: 0,
         totalMessages: 0,
-        voiceMinutes: 0,
         lastMessageXP: 0,
+
+        /*
+            SESLİ
+        */
+        voiceXP: 0,
+        voiceLevel: 0,
+        voiceMinutes: 0,
         lastVoiceXP: 0
     };
 }
+
+/*
+==================================================
+GET USER
+==================================================
+*/
 
 function getUser(guildId, userId) {
     const data = readData();
@@ -66,14 +87,77 @@ function getUser(guildId, userId) {
     }
 
     if (!data[guildId][userId]) {
-        data[guildId][userId] = createDefaultUser();
+        data[guildId][userId] =
+            createDefaultUser();
+
         writeData(data);
     }
 
-    return data[guildId][userId];
+    /*
+        Eski sistemden kalan kullanıcılar için
+        eksik alanları tamamla.
+    */
+
+    const user =
+        data[guildId][userId];
+
+    if (typeof user.chatXP !== "number") {
+        user.chatXP =
+            typeof user.xp === "number"
+                ? user.xp
+                : 0;
+    }
+
+    if (typeof user.chatLevel !== "number") {
+        user.chatLevel =
+            typeof user.level === "number"
+                ? user.level
+                : calculateLevel(
+                    user.chatXP
+                );
+    }
+
+    if (typeof user.voiceXP !== "number") {
+        user.voiceXP = 0;
+    }
+
+    if (typeof user.voiceLevel !== "number") {
+        user.voiceLevel =
+            calculateLevel(
+                user.voiceXP
+            );
+    }
+
+    if (typeof user.totalMessages !== "number") {
+        user.totalMessages = 0;
+    }
+
+    if (typeof user.voiceMinutes !== "number") {
+        user.voiceMinutes = 0;
+    }
+
+    if (typeof user.lastMessageXP !== "number") {
+        user.lastMessageXP = 0;
+    }
+
+    if (typeof user.lastVoiceXP !== "number") {
+        user.lastVoiceXP = 0;
+    }
+
+    return user;
 }
 
-function updateUser(guildId, userId, updates) {
+/*
+==================================================
+UPDATE USER
+==================================================
+*/
+
+function updateUser(
+    guildId,
+    userId,
+    updates
+) {
     const data = readData();
 
     if (!data[guildId]) {
@@ -81,7 +165,8 @@ function updateUser(guildId, userId, updates) {
     }
 
     if (!data[guildId][userId]) {
-        data[guildId][userId] = createDefaultUser();
+        data[guildId][userId] =
+            createDefaultUser();
     }
 
     data[guildId][userId] = {
@@ -95,17 +180,9 @@ function updateUser(guildId, userId, updates) {
 }
 
 /*
-    Level sistemi:
-
-    Level 0 -> 0 XP
-    Level 1 -> 100 XP
-    Level 2 -> 282 XP
-    Level 3 -> 519 XP
-    Level 4 -> 800 XP
-    Level 5 -> 1118 XP
-
-    Formül:
-    100 * level ^ 1.5
+==================================================
+XP FORMÜLÜ
+==================================================
 */
 
 function getRequiredTotalXP(level) {
@@ -118,6 +195,12 @@ function getRequiredTotalXP(level) {
     );
 }
 
+/*
+==================================================
+LEVEL HESAPLA
+==================================================
+*/
+
 function calculateLevel(xp) {
     if (!xp || xp <= 0) {
         return 0;
@@ -127,7 +210,10 @@ function calculateLevel(xp) {
 
     while (
         level < 1000 &&
-        xp >= getRequiredTotalXP(level + 1)
+        xp >=
+            getRequiredTotalXP(
+                level + 1
+            )
     ) {
         level++;
     }
@@ -135,89 +221,205 @@ function calculateLevel(xp) {
     return level;
 }
 
-function addXP(guildId, userId, amount) {
-    const user = getUser(
-        guildId,
-        userId
-    );
+/*
+==================================================
+CHAT XP
+==================================================
+*/
+
+function addChatXP(
+    guildId,
+    userId,
+    amount
+) {
+    const user =
+        getUser(
+            guildId,
+            userId
+        );
 
     const oldLevel =
-        calculateLevel(user.xp);
+        calculateLevel(
+            user.chatXP
+        );
 
-    user.xp += amount;
+    const newXP =
+        user.chatXP + amount;
 
     const newLevel =
-        calculateLevel(user.xp);
+        calculateLevel(
+            newXP
+        );
 
-    user.level = newLevel;
-
-    updateUser(
-        guildId,
-        userId,
-        user
-    );
+    const updated =
+        updateUser(
+            guildId,
+            userId,
+            {
+                chatXP: newXP,
+                chatLevel: newLevel
+            }
+        );
 
     return {
-        ...user,
+        ...updated,
+
         oldLevel,
         newLevel,
+
+        xp: newXP,
+        level: newLevel,
+
         leveledUp:
             newLevel > oldLevel
     };
 }
 
 /*
-    TEST / ADMIN SİSTEMİ
-
-    Kullanıcının levelini direkt ayarlar.
-    XP otomatik olarak o level için
-    gereken toplam XP'ye ayarlanır.
-
-    Örnek:
-
-    setLevel(guildId, userId, 5)
-
-    => Level 5
-    => 1118 XP
+==================================================
+VOICE XP
+==================================================
 */
 
-function setLevel(guildId, userId, level) {
-    level = Number(level);
+function addVoiceXP(
+    guildId,
+    userId,
+    amount
+) {
+    const user =
+        getUser(
+            guildId,
+            userId
+        );
+
+    const oldLevel =
+        calculateLevel(
+            user.voiceXP
+        );
+
+    const newXP =
+        user.voiceXP + amount;
+
+    const newLevel =
+        calculateLevel(
+            newXP
+        );
+
+    const updated =
+        updateUser(
+            guildId,
+            userId,
+            {
+                voiceXP: newXP,
+                voiceLevel: newLevel
+            }
+        );
+
+    return {
+        ...updated,
+
+        oldLevel,
+        newLevel,
+
+        xp: newXP,
+        level: newLevel,
+
+        leveledUp:
+            newLevel > oldLevel
+    };
+}
+
+/*
+==================================================
+SET LEVEL
+==================================================
+
+type:
+    chat
+    voice
+==================================================
+*/
+
+function setLevel(
+    guildId,
+    userId,
+    type,
+    level
+) {
+    level =
+        Number(level);
 
     if (!Number.isInteger(level)) {
-        throw new Error("Level tam sayı olmalıdır.");
+        throw new Error(
+            "Level tam sayı olmalıdır."
+        );
     }
 
-    if (level < 0) {
-        level = 0;
-    }
-
-    if (level > 1000) {
-        level = 1000;
-    }
+    level =
+        Math.max(
+            0,
+            Math.min(
+                1000,
+                level
+            )
+        );
 
     const xp =
         getRequiredTotalXP(level);
 
-    return updateUser(
-        guildId,
-        userId,
-        {
-            xp,
-            level
-        }
+    if (type === "chat") {
+        return updateUser(
+            guildId,
+            userId,
+            {
+                chatXP: xp,
+                chatLevel: level
+            }
+        );
+    }
+
+    if (type === "voice") {
+        return updateUser(
+            guildId,
+            userId,
+            {
+                voiceXP: xp,
+                voiceLevel: level
+            }
+        );
+    }
+
+    throw new Error(
+        "Geçersiz level türü."
     );
 }
 
+/*
+==================================================
+TÜM KULLANICILAR
+==================================================
+*/
+
 function getAllUsers(guildId) {
-    const data = readData();
+    const data =
+        readData();
 
     return data[guildId] || {};
 }
 
-function getLeaderboard(guildId) {
+/*
+==================================================
+CHAT LEADERBOARD
+==================================================
+*/
+
+function getChatLeaderboard(
+    guildId
+) {
     const users =
-        getAllUsers(guildId);
+        getAllUsers(
+            guildId
+        );
 
     return Object.entries(users)
         .map(([userId, user]) => ({
@@ -225,22 +427,80 @@ function getLeaderboard(guildId) {
             ...user
         }))
         .sort((a, b) => {
-            if (b.level !== a.level) {
-                return b.level - a.level;
+            if (
+                b.chatLevel !==
+                a.chatLevel
+            ) {
+                return (
+                    b.chatLevel -
+                    a.chatLevel
+                );
             }
 
-            return b.xp - a.xp;
+            return (
+                b.chatXP -
+                a.chatXP
+            );
         });
 }
 
-function getUserRank(guildId, userId) {
+/*
+==================================================
+VOICE LEADERBOARD
+==================================================
+*/
+
+function getVoiceLeaderboard(
+    guildId
+) {
+    const users =
+        getAllUsers(
+            guildId
+        );
+
+    return Object.entries(users)
+        .map(([userId, user]) => ({
+            userId,
+            ...user
+        }))
+        .sort((a, b) => {
+            if (
+                b.voiceLevel !==
+                a.voiceLevel
+            ) {
+                return (
+                    b.voiceLevel -
+                    a.voiceLevel
+                );
+            }
+
+            return (
+                b.voiceXP -
+                a.voiceXP
+            );
+        });
+}
+
+/*
+==================================================
+CHAT RANK
+==================================================
+*/
+
+function getChatRank(
+    guildId,
+    userId
+) {
     const leaderboard =
-        getLeaderboard(guildId);
+        getChatLeaderboard(
+            guildId
+        );
 
     const index =
         leaderboard.findIndex(
             user =>
-                user.userId === userId
+                user.userId ===
+                userId
         );
 
     return index === -1
@@ -248,14 +508,95 @@ function getUserRank(guildId, userId) {
         : index + 1;
 }
 
+/*
+==================================================
+VOICE RANK
+==================================================
+*/
+
+function getVoiceRank(
+    guildId,
+    userId
+) {
+    const leaderboard =
+        getVoiceLeaderboard(
+            guildId
+        );
+
+    const index =
+        leaderboard.findIndex(
+            user =>
+                user.userId ===
+                userId
+        );
+
+    return index === -1
+        ? null
+        : index + 1;
+}
+
+/*
+==================================================
+ESKİ FONKSİYONLARLA UYUMLULUK
+==================================================
+*/
+
+function addXP(
+    guildId,
+    userId,
+    amount
+) {
+    return addChatXP(
+        guildId,
+        userId,
+        amount
+    );
+}
+
+function getLeaderboard(
+    guildId
+) {
+    return getChatLeaderboard(
+        guildId
+    );
+}
+
+function getUserRank(
+    guildId,
+    userId
+) {
+    return getChatRank(
+        guildId,
+        userId
+    );
+}
+
+/*
+==================================================
+EXPORT
+==================================================
+*/
+
 module.exports = {
     getUser,
     updateUser,
+
     addXP,
+    addChatXP,
+    addVoiceXP,
+
     setLevel,
+
     calculateLevel,
     getRequiredTotalXP,
+
     getAllUsers,
+
     getLeaderboard,
-    getUserRank
+    getChatLeaderboard,
+    getVoiceLeaderboard,
+
+    getUserRank,
+    getChatRank,
+    getVoiceRank
 };

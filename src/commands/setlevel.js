@@ -16,20 +16,45 @@ const {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("setlevel")
-        .setDescription("Bir kullanıcının levelini ayarlar.")
+        .setDescription("Chat veya sesli level ayarlar.")
         .setDefaultMemberPermissions(
             PermissionFlagsBits.ManageGuild
         )
+
         .addUserOption(option =>
             option
                 .setName("user")
-                .setDescription("Leveli değiştirilecek kullanıcı")
+                .setDescription(
+                    "Leveli değiştirilecek kullanıcı"
+                )
                 .setRequired(true)
         )
+
+        .addStringOption(option =>
+            option
+                .setName("type")
+                .setDescription(
+                    "Hangi level ayarlanacak?"
+                )
+                .setRequired(true)
+                .addChoices(
+                    {
+                        name: "💬 Chat Level",
+                        value: "chat"
+                    },
+                    {
+                        name: "🎧 Sesli Level",
+                        value: "voice"
+                    }
+                )
+        )
+
         .addIntegerOption(option =>
             option
                 .setName("level")
-                .setDescription("Verilecek level")
+                .setDescription(
+                    "Verilecek level"
+                )
                 .setMinValue(0)
                 .setMaxValue(1000)
                 .setRequired(true)
@@ -41,7 +66,8 @@ module.exports = {
                 return interaction.reply({
                     content:
                         "❌ Bu komut sadece sunucularda kullanılabilir.",
-                    flags: MessageFlags.Ephemeral
+                    flags:
+                        MessageFlags.Ephemeral
                 });
             }
 
@@ -53,56 +79,76 @@ module.exports = {
                 return interaction.reply({
                     content:
                         "❌ Bu komutu kullanmak için **Sunucuyu Yönet** yetkisine sahip olmalısın.",
-                    flags: MessageFlags.Ephemeral
+                    flags:
+                        MessageFlags.Ephemeral
                 });
             }
 
             const target =
-                interaction.options.getMember("user");
+                interaction.options.getMember(
+                    "user"
+                );
+
+            const type =
+                interaction.options.getString(
+                    "type"
+                );
 
             const level =
-                interaction.options.getInteger("level");
+                interaction.options.getInteger(
+                    "level"
+                );
 
             if (!target) {
                 return interaction.reply({
                     content:
                         "❌ Kullanıcı sunucuda bulunamadı.",
-                    flags: MessageFlags.Ephemeral
+                    flags:
+                        MessageFlags.Ephemeral
                 });
             }
 
             /*
-                Level + XP ayarla
+                Level ayarla
             */
+
             const user =
                 setLevel(
                     interaction.guild.id,
                     target.id,
+                    type,
                     level
                 );
 
             /*
-                Chat + [X]
-                Sesli + [X]
-
-                rollerini güncelle
+                Mevcut iki sistemi
+                birlikte kontrol et
             */
+
             await updateLevelRoles(
                 interaction.guild,
                 target,
-                level
+                user.chatLevel,
+                user.voiceLevel
             );
 
             const xp =
-                getRequiredTotalXP(level);
+                getRequiredTotalXP(
+                    level
+                );
+
+            const typeName =
+                type === "chat"
+                    ? "💬 Chat"
+                    : "🎧 Sesli";
 
             return interaction.reply({
                 content:
-                    `✅ ${target} kullanıcısının seviyesi **Level ${level}** olarak ayarlandı.\n\n` +
+                    `✅ ${target} kullanıcısının **${typeName} Level'i ${level}** olarak ayarlandı.\n\n` +
                     `✨ XP: **${xp.toLocaleString("tr-TR")} XP**`,
-                flags: MessageFlags.Ephemeral
+                flags:
+                    MessageFlags.Ephemeral
             });
-
         } catch (error) {
             console.error(
                 "❌ setlevel komutu hatası:",
@@ -116,14 +162,16 @@ module.exports = {
                 return interaction.followUp({
                     content:
                         "❌ Level ayarlanırken bir hata oluştu.",
-                    flags: MessageFlags.Ephemeral
+                    flags:
+                        MessageFlags.Ephemeral
                 });
             }
 
             return interaction.reply({
                 content:
                     "❌ Level ayarlanırken bir hata oluştu.",
-                flags: MessageFlags.Ephemeral
+                flags:
+                    MessageFlags.Ephemeral
             });
         }
     }
