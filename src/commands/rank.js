@@ -17,48 +17,50 @@ const {
 } = require("../utils/levelingStore");
 
 // ============================================================
-// AYARLAR
+// SHIZU RANK CARD
 // ============================================================
 
 const WIDTH = 1100;
 const HEIGHT = 420;
 
-const COLORS = {
-    background: "#100727",
-    background2: "#241044",
-    purple: "#a855f7",
-    purpleLight: "#c084fc",
-    white: "#ffffff",
-    text: "#eee7ff",
-    muted: "#aa9bc7",
-    panel: "#2b1650",
-    panel2: "#351a61",
-    bar: "#9b5de5",
-    barBackground: "#442768"
-};
-
 // ============================================================
-// YARDIMCI
+// SAFE
 // ============================================================
 
-function safeNumber(value, fallback = 0) {
-    const number = Number(value);
+function num(value, fallback = 0) {
+    const n = Number(value);
 
-    if (!Number.isFinite(number)) {
-        return fallback;
-    }
-
-    return number;
+    return Number.isFinite(n)
+        ? n
+        : fallback;
 }
 
-function clamp(value, min, max) {
+function clamp(
+    value,
+    min,
+    max
+) {
     return Math.min(
         max,
-        Math.max(min, value)
+        Math.max(
+            min,
+            value
+        )
     );
 }
 
-function roundRect(
+function formatNumber(value) {
+    return num(
+        value,
+        0
+    ).toLocaleString("tr-TR");
+}
+
+// ============================================================
+// ROUNDED RECT
+// ============================================================
+
+function roundedRect(
     ctx,
     x,
     y,
@@ -66,11 +68,12 @@ function roundRect(
     height,
     radius
 ) {
-    const r = Math.min(
-        radius,
-        width / 2,
-        height / 2
-    );
+    const r =
+        Math.min(
+            radius,
+            width / 2,
+            height / 2
+        );
 
     ctx.beginPath();
 
@@ -130,40 +133,39 @@ function roundRect(
     ctx.closePath();
 }
 
-function drawText(
+// ============================================================
+// TEXT
+// ============================================================
+
+function text(
     ctx,
-    text,
+    value,
     x,
     y,
     size,
-    color = COLORS.white,
+    color,
     weight = "700"
 ) {
     ctx.font =
         `${weight} ${size}px Arial`;
 
-    ctx.fillStyle = color;
+    ctx.fillStyle =
+        color;
 
     ctx.fillText(
-        String(text),
+        String(value),
         x,
         y
     );
-}
-
-function formatNumber(number) {
-    return Number(
-        safeNumber(number, 0)
-    ).toLocaleString("tr-TR");
 }
 
 // ============================================================
 // AVATAR
 // ============================================================
 
-async function getAvatar(user) {
+async function loadAvatar(user) {
     try {
-        const avatarURL =
+        const url =
             user.displayAvatarURL({
                 extension: "png",
                 size: 256,
@@ -171,7 +173,7 @@ async function getAvatar(user) {
             });
 
         return await loadImage(
-            avatarURL
+            url
         );
 
     } catch {
@@ -180,104 +182,38 @@ async function getAvatar(user) {
 }
 
 // ============================================================
-// AY
-// ============================================================
-
-function drawMoon(ctx) {
-    // Glow
-    const gradient =
-        ctx.createRadialGradient(
-            900,
-            80,
-            10,
-            900,
-            80,
-            120
-        );
-
-    gradient.addColorStop(
-        0,
-        "rgba(210,150,255,0.45)"
-    );
-
-    gradient.addColorStop(
-        1,
-        "rgba(210,150,255,0)"
-    );
-
-    ctx.fillStyle = gradient;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        900,
-        80,
-        120,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    // Moon
-    ctx.fillStyle =
-        "#d8a7ff";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        900,
-        80,
-        60,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    // Dark overlay = crescent
-    ctx.fillStyle =
-        COLORS.background;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        925,
-        65,
-        58,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-}
-
-// ============================================================
 // STARS
 // ============================================================
 
 function drawStars(ctx) {
     const stars = [
-        [80, 40, 2],
-        [180, 20, 1],
-        [280, 75, 2],
-        [410, 35, 1],
-        [515, 85, 2],
-        [650, 35, 1],
-        [760, 110, 2],
-        [1000, 35, 1],
-        [1040, 120, 2],
-        [1080, 60, 1],
-        [740, 170, 1],
-        [40, 150, 1],
-        [330, 130, 1]
+        [55, 42, 1],
+        [125, 25, 2],
+        [210, 55, 1],
+        [300, 28, 2],
+        [390, 62, 1],
+        [475, 35, 2],
+        [560, 72, 1],
+        [655, 32, 2],
+        [735, 80, 1],
+        [810, 38, 2],
+        [1010, 35, 1],
+        [1050, 90, 2],
+        [45, 150, 1],
+        [265, 125, 1],
+        [600, 140, 1],
+        [750, 155, 2]
     ];
 
     for (
-        const [x, y, size] of stars
+        const star of stars
     ) {
+        const x = star[0];
+        const y = star[1];
+        const size = star[2];
+
         ctx.fillStyle =
-            "rgba(235,215,255,0.85)";
+            "rgba(255,255,255,0.8)";
 
         ctx.beginPath();
 
@@ -294,7 +230,80 @@ function drawStars(ctx) {
 }
 
 // ============================================================
-// AVATAR CIRCLE
+// MOON
+// ============================================================
+
+function drawMoon(ctx) {
+    const glow =
+        ctx.createRadialGradient(
+            890,
+            75,
+            5,
+            890,
+            75,
+            130
+        );
+
+    glow.addColorStop(
+        0,
+        "rgba(202,145,255,0.45)"
+    );
+
+    glow.addColorStop(
+        1,
+        "rgba(202,145,255,0)"
+    );
+
+    ctx.fillStyle =
+        glow;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        890,
+        75,
+        130,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    // Ay
+    ctx.fillStyle =
+        "#d9a8ff";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        890,
+        75,
+        58,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    // Karartma
+    ctx.fillStyle =
+        "#11072a";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        915,
+        58,
+        57,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+}
+
+// ============================================================
+// AVATAR
 // ============================================================
 
 function drawAvatar(
@@ -308,19 +317,20 @@ function drawAvatar(
 
     // Glow
     ctx.shadowColor =
-        COLORS.purpleLight;
+        "#a855f7";
 
-    ctx.shadowBlur = 18;
+    ctx.shadowBlur =
+        25;
 
     ctx.fillStyle =
-        COLORS.purple;
+        "#a855f7";
 
     ctx.beginPath();
 
     ctx.arc(
         x + size / 2,
         y + size / 2,
-        size / 2 + 5,
+        size / 2 + 6,
         0,
         Math.PI * 2
     );
@@ -329,7 +339,7 @@ function drawAvatar(
 
     ctx.shadowBlur = 0;
 
-    // Circle
+    // Clip
     ctx.beginPath();
 
     ctx.arc(
@@ -352,7 +362,7 @@ function drawAvatar(
         );
     } else {
         ctx.fillStyle =
-            COLORS.panel2;
+            "#28114b";
 
         ctx.fillRect(
             x,
@@ -366,10 +376,56 @@ function drawAvatar(
 }
 
 // ============================================================
+// STAT CARD
+// ============================================================
+
+function statCard(
+    ctx,
+    x,
+    y,
+    width,
+    height,
+    title,
+    value
+) {
+    ctx.fillStyle =
+        "rgba(75,39,115,0.72)";
+
+    roundedRect(
+        ctx,
+        x,
+        y,
+        width,
+        height,
+        12
+    );
+
+    ctx.fill();
+
+    text(
+        ctx,
+        title,
+        x + 18,
+        y + 23,
+        10,
+        "#a99bc4"
+    );
+
+    text(
+        ctx,
+        value,
+        x + 18,
+        y + 49,
+        18,
+        "#ffffff"
+    );
+}
+
+// ============================================================
 // XP BAR
 // ============================================================
 
-function drawXPBar(
+function xpBar(
     ctx,
     x,
     y,
@@ -379,7 +435,7 @@ function drawXPBar(
 ) {
     const safeProgress =
         clamp(
-            safeNumber(
+            num(
                 progress,
                 0
             ),
@@ -387,11 +443,11 @@ function drawXPBar(
             100
         );
 
-    // Background
+    // Arka plan
     ctx.fillStyle =
-        COLORS.barBackground;
+        "#432663";
 
-    roundRect(
+    roundedRect(
         ctx,
         x,
         y,
@@ -402,12 +458,17 @@ function drawXPBar(
 
     ctx.fill();
 
-    // Progress
+    // Doluluk
     const fillWidth =
         width *
-        (safeProgress / 100);
+        (
+            safeProgress /
+            100
+        );
 
-    if (fillWidth > 0) {
+    if (
+        fillWidth > 0
+    ) {
         const gradient =
             ctx.createLinearGradient(
                 x,
@@ -423,13 +484,13 @@ function drawXPBar(
 
         gradient.addColorStop(
             1,
-            "#c084fc"
+            "#d084ff"
         );
 
         ctx.fillStyle =
             gradient;
 
-        roundRect(
+        roundedRect(
             ctx,
             x,
             y,
@@ -446,117 +507,64 @@ function drawXPBar(
 }
 
 // ============================================================
-// STAT CARD
-// ============================================================
-
-function drawStatCard(
-    ctx,
-    x,
-    y,
-    width,
-    height,
-    title,
-    value
-) {
-    ctx.fillStyle =
-        "rgba(76,40,118,0.62)";
-
-    roundRect(
-        ctx,
-        x,
-        y,
-        width,
-        height,
-        12
-    );
-
-    ctx.fill();
-
-    drawText(
-        ctx,
-        title,
-        x + 18,
-        y + 25,
-        11,
-        COLORS.muted,
-        "700"
-    );
-
-    drawText(
-        ctx,
-        value,
-        x + 18,
-        y + 49,
-        18,
-        COLORS.text,
-        "700"
-    );
-}
-
-// ============================================================
-// RANK NUMARASI
+// SERVER RANK
 // ============================================================
 
 async function getServerRank(
     guild,
-    userId,
-    totalXP
+    userId
 ) {
     try {
-        if (!guild) {
-            return 1;
-        }
-
         await guild.members.fetch();
 
-        const users = [];
+        const list = [];
 
         for (
-            const member of guild.members.cache.values()
+            const member of
+            guild.members.cache.values()
         ) {
-            if (member.user.bot) {
+            if (
+                member.user.bot
+            ) {
                 continue;
             }
 
-            try {
-                const data =
-                    getUser(
-                        guild.id,
-                        member.id
-                    );
+            const user =
+                getUser(
+                    guild.id,
+                    member.id
+                ) || {};
 
-                const xp =
-                    safeNumber(
-                        data?.xp,
-                        0
-                    );
+            // ÖNEMLİ:
+            // Yeni sistem chatXP kullanıyor.
+            const xp =
+                num(
+                    user.chatXP ??
+                    user.xp ??
+                    0
+                );
 
-                users.push({
-                    id: member.id,
-                    xp
-                });
-
-            } catch {
-                // Kullanıcı verisi yoksa geç
-            }
+            list.push({
+                id: member.id,
+                xp
+            });
         }
 
-        users.sort(
+        list.sort(
             (a, b) =>
                 b.xp - a.xp
         );
 
         const index =
-            users.findIndex(
-                user =>
-                    user.id === userId
+            list.findIndex(
+                item =>
+                    item.id ===
+                    userId
             );
 
-        if (index === -1) {
-            return 1;
-        }
-
-        return index + 1;
+        return index >= 0
+            ? index + 1
+            : 1;
 
     } catch {
         return 1;
@@ -564,7 +572,7 @@ async function getServerRank(
 }
 
 // ============================================================
-// RANK CANVAS
+// CREATE CARD
 // ============================================================
 
 async function createRankCard(
@@ -582,10 +590,10 @@ async function createRankCard(
         canvas.getContext("2d");
 
     // ========================================================
-    // ARKA PLAN
+    // BACKGROUND
     // ========================================================
 
-    const background =
+    const bg =
         ctx.createLinearGradient(
             0,
             0,
@@ -593,23 +601,23 @@ async function createRankCard(
             HEIGHT
         );
 
-    background.addColorStop(
+    bg.addColorStop(
         0,
-        "#0c051c"
+        "#0c051b"
     );
 
-    background.addColorStop(
-        0.48,
-        "#18082f"
+    bg.addColorStop(
+        0.45,
+        "#17072f"
     );
 
-    background.addColorStop(
+    bg.addColorStop(
         1,
-        "#4b1f78"
+        "#4a1f76"
     );
 
     ctx.fillStyle =
-        background;
+        bg;
 
     ctx.fillRect(
         0,
@@ -622,140 +630,79 @@ async function createRankCard(
     drawMoon(ctx);
 
     // ========================================================
-    // ANA PANEL
+    // BORDER
     // ========================================================
 
-    ctx.fillStyle =
-        "rgba(20,8,43,0.42)";
+    ctx.strokeStyle =
+        "rgba(174,88,255,0.75)";
 
-    roundRect(
+    ctx.lineWidth = 2;
+
+    roundedRect(
         ctx,
         2,
         2,
         WIDTH - 4,
         HEIGHT - 4,
-        12
+        10
     );
 
-    ctx.fill();
+    ctx.stroke();
 
     // ========================================================
-    // AVATAR
+    // DATA
     // ========================================================
 
-    const avatar =
-        await getAvatar(
-            member.user
+    const chatXP =
+        num(
+            info.chatXP ??
+            info.xp ??
+            0
         );
-
-    drawAvatar(
-        ctx,
-        avatar,
-        62,
-        65,
-        105
-    );
-
-    // ========================================================
-    // USERNAME
-    // ========================================================
-
-    const username =
-        member.user.username
-            .slice(0, 22);
-
-    drawText(
-        ctx,
-        username,
-        185,
-        94,
-        26,
-        COLORS.white,
-        "700"
-    );
-
-    drawText(
-        ctx,
-        "SHIZU XP PROFILE",
-        185,
-        122,
-        13,
-        COLORS.muted,
-        "700"
-    );
-
-    // ========================================================
-    // LEVEL
-    // ========================================================
 
     const level =
-        safeNumber(
-            info.level,
+        Math.max(
+            0,
+            Math.floor(
+                num(
+                    info.chatLevel ??
+                    info.level ??
+                    0
+                )
+            )
+        );
+
+    const currentLevelXP =
+        num(
+            info.currentLevelXP,
             0
         );
 
-    drawText(
-        ctx,
-        `LEVEL ${level}`,
-        62,
-        230,
-        58,
-        COLORS.white,
-        "700"
-    );
-
-    // ========================================================
-    // SERVER RANK
-    // ========================================================
-
-    drawText(
-        ctx,
-        `#${serverRank} SUNUCU SIRALAMASI`,
-        65,
-        265,
-        17,
-        COLORS.purpleLight,
-        "700"
-    );
-
-    // ========================================================
-    // XP
-    // ========================================================
-
-    const xpInLevel =
-        safeNumber(
-            info.xpInLevel,
-            0
+    const nextLevelXP =
+        num(
+            info.nextLevelXP,
+            currentLevelXP + 100
         );
 
     const xpRequired =
         Math.max(
             1,
-            safeNumber(
-                info.xpRequired,
-                100
-            )
+            nextLevelXP -
+            currentLevelXP
+        );
+
+    const xpInLevel =
+        Math.max(
+            0,
+            chatXP -
+            currentLevelXP
         );
 
     let progress =
-        safeNumber(
-            info.progress,
-            0
-        );
-
-    // Eğer manager progress vermediyse
-    // burada yeniden hesapla.
-    if (
-        !Number.isFinite(progress) ||
-        progress < 0 ||
-        progress > 100
-    ) {
-        progress =
-            (
-                xpInLevel /
-                xpRequired
-            ) * 100;
-    }
+        (
+            xpInLevel /
+            xpRequired
+        ) * 100;
 
     progress =
         clamp(
@@ -764,61 +711,126 @@ async function createRankCard(
             100
         );
 
-    const xpText =
-        `${formatNumber(xpInLevel)} / ${formatNumber(xpRequired)} XP`;
+    // ========================================================
+    // AVATAR
+    // ========================================================
 
-    drawXPBar(
+    const avatar =
+        await loadAvatar(
+            member.user
+        );
+
+    drawAvatar(
         ctx,
-        62,
+        avatar,
+        60,
+        65,
+        105
+    );
+
+    // ========================================================
+    // USER
+    // ========================================================
+
+    text(
+        ctx,
+        member.user.username.slice(
+            0,
+            20
+        ),
+        185,
+        96,
+        26,
+        "#ffffff"
+    );
+
+    text(
+        ctx,
+        "SHIZU XP PROFILE",
+        185,
+        123,
+        13,
+        "#a99bc4"
+    );
+
+    // ========================================================
+    // LEVEL
+    // ========================================================
+
+    text(
+        ctx,
+        `LEVEL ${level}`,
+        60,
+        230,
+        58,
+        "#ffffff"
+    );
+
+    // ========================================================
+    // SERVER RANK
+    // ========================================================
+
+    text(
+        ctx,
+        `#${serverRank} SUNUCU SIRALAMASI`,
+        64,
+        264,
+        17,
+        "#c084fc"
+    );
+
+    // ========================================================
+    // XP BAR
+    // ========================================================
+
+    xpBar(
+        ctx,
+        60,
         300,
         690,
-        16,
+        17,
         progress
     );
 
-    drawText(
+    // ========================================================
+    // XP TEXT
+    // ========================================================
+
+    text(
         ctx,
-        xpText,
-        62,
-        343,
+        `${formatNumber(xpInLevel)} / ${formatNumber(xpRequired)} XP`,
+        60,
+        344,
         13,
-        COLORS.muted,
-        "700"
+        "#aaa0bd"
     );
 
-    drawText(
+    text(
         ctx,
         `${Math.round(progress)}%`,
         700,
-        343,
+        344,
         13,
-        COLORS.muted,
-        "700"
+        "#aaa0bd"
     );
 
     // ========================================================
-    // SAĞ STATLAR
+    // RIGHT STATS
     // ========================================================
 
-    const totalMessages =
-        safeNumber(
+    const messages =
+        num(
             info.totalMessages,
             0
         );
 
     const voiceMinutes =
-        safeNumber(
+        num(
             info.voiceMinutes,
             0
         );
 
-    const totalXP =
-        safeNumber(
-            info.xp,
-            0
-        );
-
-    drawStatCard(
+    statCard(
         ctx,
         790,
         135,
@@ -826,69 +838,54 @@ async function createRankCard(
         70,
         "MESAJ",
         formatNumber(
-            totalMessages
+            messages
         )
     );
 
-    drawStatCard(
+    statCard(
         ctx,
         790,
         220,
         250,
         70,
         "SES",
-        `${formatNumber(voiceMinutes)} dk`
+        `${formatNumber(
+            voiceMinutes
+        )} dk`
     );
 
-    drawStatCard(
+    statCard(
         ctx,
         790,
         305,
         250,
         70,
         "TOPLAM XP",
-        formatNumber(totalXP)
+        formatNumber(
+            chatXP
+        )
     );
 
     // ========================================================
-    // SHIZU WATERMARK
+    // SHIZU
     // ========================================================
 
-    drawText(
+    text(
         ctx,
         "SHIZU",
-        975,
+        978,
         395,
-        15,
-        COLORS.muted,
-        "700"
+        14,
+        "#a99bc4"
     );
 
-    // ========================================================
-    // BORDER
-    // ========================================================
-
-    ctx.strokeStyle =
-        "rgba(180,100,255,0.75)";
-
-    ctx.lineWidth = 2;
-
-    roundRect(
-        ctx,
-        2,
-        2,
-        WIDTH - 4,
-        HEIGHT - 4,
-        12
+    return canvas.encode(
+        "png"
     );
-
-    ctx.stroke();
-
-    return canvas.encode("png");
 }
 
 // ============================================================
-// COMMAND
+// SLASH COMMAND
 // ============================================================
 
 const data =
@@ -915,7 +912,9 @@ async function execute(
     interaction
 ) {
     try {
-        if (!interaction.guild) {
+        if (
+            !interaction.guild
+        ) {
             await interaction.reply({
                 content:
                     "❌ Bu komut sadece sunucuda kullanılabilir.",
@@ -927,26 +926,31 @@ async function execute(
 
         await interaction.deferReply();
 
-        // Kullanıcı seçilmişse onu,
-        // seçilmemişse komutu kullananı göster.
-        const targetUser =
+        // ====================================================
+        // TARGET
+        // ====================================================
+
+        const target =
             interaction.options.getUser(
                 "user"
             ) ||
             interaction.user;
 
-        // Guild member
+        // ====================================================
+        // MEMBER
+        // ====================================================
+
         let member;
 
         try {
             member =
                 await interaction.guild.members.fetch(
-                    targetUser.id
+                    target.id
                 );
         } catch {
             member =
                 interaction.guild.members.cache.get(
-                    targetUser.id
+                    target.id
                 );
         }
 
@@ -960,13 +964,13 @@ async function execute(
         }
 
         // ====================================================
-        // RANK DATA
+        // RANK INFO
         // ====================================================
 
         const info =
             getRankInfo(
                 interaction.guild.id,
-                targetUser.id
+                target.id
             );
 
         // ====================================================
@@ -976,12 +980,11 @@ async function execute(
         const serverRank =
             await getServerRank(
                 interaction.guild,
-                targetUser.id,
-                info.xp
+                target.id
             );
 
         // ====================================================
-        // CANVAS
+        // CREATE PNG
         // ====================================================
 
         const buffer =
@@ -1001,16 +1004,18 @@ async function execute(
             );
 
         // ====================================================
-        // GÖNDER
+        // SEND
         // ====================================================
 
         await interaction.editReply({
-            files: [attachment]
+            files: [
+                attachment
+            ]
         });
 
     } catch (error) {
         console.error(
-            "Rank komutu hatası:",
+            "[RANK ERROR]",
             error
         );
 
@@ -1030,11 +1035,13 @@ async function execute(
                     ephemeral: true
                 });
             }
-        } catch {
-            // Discord yanıtı artık mümkün değil
-        }
+        } catch {}
     }
 }
+
+// ============================================================
+// EXPORT
+// ============================================================
 
 module.exports = {
     data,
