@@ -1,30 +1,43 @@
-# Shizu Anime RPG — Entegre Paket
+# SHIZU RPG — PNG UI FINAL
 
-Bu paket mevcut Shizu botuna RPG katmanını eklemek için hazırlanmıştır.
+Bu paket mevcut Shizu RPG projesine drop-in olarak hazırlanmıştır.
 
-## Kopyalanacak dosyalar
-- `src/index.js` → mevcut index.js ile değiştir
-- `src/deploy-commands.js` → mevcut deploy dosyanla değiştir
-- `src/rpg/` → klasörü komple kopyala
-- `src/commands/rpg.js`
-- `src/commands/rpgadmin.js`
-- `data/rpg/` → kalıcı RPG verileri burada oluşur
+## Dosyalar
+
+- `src/rpg/rpgManager.js` — PNG UI bağlantılı yeni manager
+- `src/rpg/ui/01_profile.png`
+- `src/rpg/ui/02_inventory.png`
+- `src/rpg/ui/03_achievements.png`
+- `src/rpg/ui/04_merchant.png`
+- `src/rpg/ui/05_craft.png`
+- `src/rpg/ui/06_evolution.png`
+- `src/rpg/ui/07_espada.png`
 
 ## Kurulum
-1. Bot klasöründe yedek al.
-2. Bu paketteki dosyaları proje köküne kopyala ve üzerine yaz.
-3. `.env` içinde `DISCORD_TOKEN`, `CLIENT_ID`, `GUILD_ID` kalsın.
-4. Terminalde:
-   `node src/deploy-commands.js`
-5. Ardından:
-   `node src/index.js`
 
-## Kullanım
-`/rpg panel`
+1. Mevcut:
+   `src/rpg/rpgManager.js`
+   dosyasını bu paketteki ile değiştir.
 
-Panel tamamen butonludur. Profil, envanter, tüccar, görevler, başarımlar, craft, gelişim, Espada ve bakiye tek panelden yönetilir.
+2. `src/rpg/ui/` klasörünü oluştur ve 7 PNG'yi içine koy.
 
-Yönetici:
-- `/rpgadmin merchant minutes:30`
-- `/rpgadmin give user:@... item:hollow_mask amount:1`
-- `/rpgadmin coin user:@... amount:1000`
+3. Botu restart et.
+
+Slash command deploy gerekmez; command isimleri değiştirilmedi.
+
+## Nasıl çalışıyor?
+
+Manager `AttachmentBuilder` ile ilgili PNG'yi Discord mesajına ekler ve:
+`attachment://01_profile.png`
+gibi embed image olarak bağlar.
+
+Sayfa değiştirildiğinde ilgili PNG yeniden attach edilir:
+Profile -> profile PNG
+Inventory -> inventory PNG
+Achievements -> achievements PNG
+Merchant -> merchant PNG
+Craft -> craft PNG
+Evolution -> evolution PNG
+Espada -> espada PNG
+
+Gerçek Discord butonları mesajın altında çalışmaya devam eder.
