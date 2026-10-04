@@ -682,35 +682,44 @@ function balanceEmbed(member) {
 }
 
 
+
+function imagePayload(interaction, page, extraComponents = []) {
+  return {
+    content: '',
+    embeds: [],
+    files: filesForPage(page),
+    components: [...extraComponents, ...navRows(page)]
+  };
+}
+
 function viewPayload(interaction, page) {
-  const member = interaction.member;
   const guildId = interaction.guild.id;
   const userId = interaction.user.id;
 
   switch (page) {
     case 'profile':
-      return { embeds: [profileEmbed(member)], components: navRows('profile'), files: filesForPage('profile') };
+      return imagePayload(interaction, 'profile');
     case 'inventory':
-      return { embeds: [inventoryEmbed(guildId, userId, member)], components: navRows('inventory'), files: filesForPage('inventory') };
+      return imagePayload(interaction, 'inventory');
     case 'merchant':
-      return { embeds: [merchantEmbed(member)], components: [...merchantComponents(), ...navRows('merchant')], files: filesForPage('merchant') };
+      return imagePayload(interaction, 'merchant', merchantComponents());
     case 'achievements':
-      return { embeds: [achievementsEmbed(guildId, userId, member)], components: navRows('achievements'), files: filesForPage('achievements') };
+      return imagePayload(interaction, 'achievements');
     case 'craft':
-      return { embeds: [craftEmbed(member)], components: [...craftComponents(), ...navRows('craft')], files: filesForPage('craft') };
+      return imagePayload(interaction, 'craft', craftComponents());
     case 'evolution':
-      return { embeds: [evolutionEmbed(guildId, userId, member)], components: [...evolutionComponents(guildId, userId), ...navRows('evolution')], files: filesForPage('evolution') };
+      return imagePayload(interaction, 'evolution', evolutionComponents(guildId, userId));
     case 'espada':
-      return { embeds: [espadaEmbed(member)], components: navRows('espada'), files: filesForPage('espada') };
+      return imagePayload(interaction, 'espada');
     case 'balance':
-      return { embeds: [balanceEmbed(member)], components: navRows('balance'), files: filesForPage('balance') };
+      return imagePayload(interaction, 'balance');
     default:
-      return { embeds: [panelEmbed(member)], components: navRows(), files: filesForPage('panel') };
+      return imagePayload(interaction, 'profile');
   }
 }
 
 function showPanel(interaction, edit = false) {
-  const payload = viewPayload(interaction, 'panel');
+  const payload = viewPayload(interaction, 'profile');
   return edit ? interaction.update(payload) : interaction.reply(payload);
 }
 
@@ -738,29 +747,17 @@ async function handleButton(interaction) {
 
     if (id === 'rpg:buy-select') {
       const name = buy(interaction.guild.id, interaction.user.id, Number(interaction.values[0]));
-      return interaction.update({
-        embeds: [merchantEmbed(interaction.member)],
-        components: [...merchantComponents(), ...navRows('merchant')],
-        files: filesForPage('merchant')
-      });
+      return interaction.update(imagePayload(interaction, 'merchant', merchantComponents()));
     }
 
     if (id === 'rpg:craft-select') {
       craft(interaction.guild.id, interaction.user.id, interaction.values[0]);
-      return interaction.update({
-        embeds: [craftEmbed(interaction.member)],
-        components: [...craftComponents(), ...navRows('craft')],
-        files: filesForPage('craft')
-      });
+      return interaction.update(imagePayload(interaction, 'craft', craftComponents()));
     }
 
     if (id === 'rpg:evolution-select') {
       evolve(interaction.guild.id, interaction.user.id, interaction.values[0]);
-      return interaction.update({
-        embeds: [evolutionEmbed(interaction.guild.id, interaction.user.id, interaction.member)],
-        components: [...evolutionComponents(interaction.guild.id, interaction.user.id), ...navRows('evolution')],
-        files: filesForPage('evolution')
-      });
+      return interaction.update(imagePayload(interaction, 'evolution', evolutionComponents(interaction.guild.id, interaction.user.id)));
     }
   } catch (error) {
     if (interaction.replied || interaction.deferred) {
