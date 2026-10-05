@@ -3,7 +3,7 @@
 ## Kurulum
 1. Node.js 20+ (önerilen 22) kullan.
 2. `.env.example` dosyasını `.env` olarak kopyala.
-3. `.env` içine gerçek `DISCORD_TOKEN`, `GUILD_ID` ve `ACTIVITY_ROLE_ID` yaz.
+3. `.env` içine gerçek `DISCORD_TOKEN`, `GUILD_ID` ve `VOICE_ACTIVITY_ROLE_ID / CHAT_ACTIVITY_ROLE_ID` yaz.
 4. `npm install`
 5. `npm start`
 
@@ -34,4 +34,4 @@ Botu sunucuya davet ederken gerekli slash command kapsamı (`applications.comman
 - `better-sqlite3` kullanılmaz.
 
 ## Önemli
-Bot rolünü ödül rolünün (`ACTIVITY_ROLE_ID`) üstüne taşı ve botun rol yönetme yetkisi olduğundan emin ol.
+Bot rolünü ödül rolünün (`VOICE_ACTIVITY_ROLE_ID / CHAT_ACTIVITY_ROLE_ID`) üstüne taşı ve botun rol yönetme yetkisi olduğundan emin ol.

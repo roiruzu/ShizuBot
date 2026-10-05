@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const required = ["DISCORD_TOKEN", "GUILD_ID", "ACTIVITY_ROLE_ID"];
+const required = ["DISCORD_TOKEN", "GUILD_ID", "VOICE_ACTIVITY_ROLE_ID", "CHAT_ACTIVITY_ROLE_ID"];
 
 for (const key of required) {
   if (!process.env[key]) {
@@ -11,7 +11,8 @@ for (const key of required) {
 module.exports = {
   token: process.env.DISCORD_TOKEN,
   guildId: process.env.GUILD_ID,
-  activityRoleId: process.env.ACTIVITY_ROLE_ID,
+  voiceActivityRoleId: process.env.VOICE_ACTIVITY_ROLE_ID,
+  chatActivityRoleId: process.env.CHAT_ACTIVITY_ROLE_ID,
   timezone: process.env.TIMEZONE || "Europe/Istanbul",
   announcementChannelId: process.env.ANNOUNCEMENT_CHANNEL_ID || null,
   chatCooldownSeconds: Math.max(0, Number(process.env.CHAT_COOLDOWN_SECONDS || 10)),
