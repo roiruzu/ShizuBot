@@ -1,0 +1,19 @@
+⚔️ **SHIZU HAFTALIK AKTİVİTE SAVAŞI**
+
+> **"Yolumu kaybetmiş olabilirim ama zirveye giden yolu asla unutmam. En güçlü olmak istiyorsan kılıcını çek ve sınırlarını zorla!"**
+> — *Roronoa Zoro*
+
+🟢 **YAZILI SOHBET AKTİFLİĞİ — CHAT SAVAŞI**
+• Metin kanallarında aktif olarak sohbet et ve haftalık sıralamaya gir.
+• Haftayı genel chatte en çok mesajla **ilk 3** içinde bitiren üyeler `1556678194399289356` rolünü kazanır.
+
+🗡️ **SESLİ KANAL AKTİFLİĞİ — VOICE SAVAŞI**
+• Sesli kanallarda vakit geçir, sohbet et ve aktiflik süreni artır.
+• Seste en çok zaman geçiren **ilk 3** üyeye `1556678194399289356` rolü verilir.
+
+📜 **SIFIRLANMA**
+• Haftalık sıralama her **Pazar 23:59**'da sıfırlanır.
+• Sıralamanı `/top` veya `!leaderboard` ile kontrol edebilirsin.
+
+📌 **UYARI**
+Sahte aktiflik, AFK kalma ve anlamsız spam tespiti halinde haftalık puanların silinebilir.

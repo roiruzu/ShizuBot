@@ -1,93 +1,62 @@
 const {
-    SlashCommandBuilder,
-    EmbedBuilder
+  SlashCommandBuilder,
+  EmbedBuilder
 } = require("discord.js");
+const { getLeaderboard } = require("../services/leaderboardService");
+const { getUserStats } = require("../services/activityService");
+const { formatDuration, medal } = require("../utils/format");
 
-const {
-    getLeaderboard
-} = require("../utils/levelingStore");
+const data = new SlashCommandBuilder()
+  .setName("top")
+  .setDescription("Haftalık SHIZU aktivite sıralamasını gösterir.")
+  .addStringOption(option =>
+    option
+      .setName("kategori")
+      .setDescription("Sıralama türü")
+      .setRequired(false)
+      .addChoices(
+        { name: "Genel", value: "all" },
+        { name: "Yazılı Sohbet", value: "chat" },
+        { name: "Sesli Kanal", value: "voice" }
+      )
+  );
 
-module.exports = {
+async function execute(interaction) {
+  const type = interaction.options.getString("kategori") || "all";
+  const rows = getLeaderboard(interaction.guild.id, type, 10);
 
-    data: new SlashCommandBuilder()
-        .setName("top")
-        .setDescription(
-            "XP liderlik tablosunu gösterir."
-        ),
+  const lines = rows.length
+    ? rows.map((row, i) => {
+        const chat = `${row.chat_messages} mesaj`;
+        const voice = formatDuration(row.voice_seconds);
 
-    async execute(interaction) {
-
-        const leaderboard =
-            getLeaderboard(
-                interaction.guild.id
-            ).slice(0, 10);
-
-        if (!leaderboard.length) {
-
-            await interaction.reply({
-                content:
-                    "📊 Henüz XP kazanan kimse yok."
-            });
-
-            return;
+        if (type === "chat") {
+          return `${medal(i)} <@${row.user_id}> — **${chat}**`;
         }
 
-        const lines = [];
-
-        for (
-            let i = 0;
-            i < leaderboard.length;
-            i++
-        ) {
-
-            const data =
-                leaderboard[i];
-
-            const member =
-                await interaction.guild.members
-                    .fetch(data.userId)
-                    .catch(() => null);
-
-            const username =
-                member?.user.username ||
-                "Bilinmeyen Kullanıcı";
-
-            let medal;
-
-            if (i === 0) {
-                medal = "🥇";
-            } else if (i === 1) {
-                medal = "🥈";
-            } else if (i === 2) {
-                medal = "🥉";
-            } else {
-                medal =
-                    `**${i + 1}.**`;
-            }
-
-            lines.push(
-                `${medal} **${username}**\n` +
-                `└ 🏆 Level ${data.level} • ⭐ ${data.xp} XP`
-            );
+        if (type === "voice") {
+          return `${medal(i)} <@${row.user_id}> — **${voice}**`;
         }
 
-        const embed =
-            new EmbedBuilder()
-                .setTitle(
-                    "🏆 Shizu XP Liderlik Tablosu"
-                )
-                .setDescription(
-                    lines.join("\n\n")
-                )
-                .setColor(0xFEE75C)
-                .setFooter({
-                    text:
-                        `${interaction.guild.name} • İlk 10`
-                })
-                .setTimestamp();
+        return `${medal(i)} <@${row.user_id}> — **${chat}** • **${voice}**`;
+      }).join("\n")
+    : "Bu hafta henüz aktivite verisi yok.";
 
-        await interaction.reply({
-            embeds: [embed]
-        });
-    }
-};
+  const me = getUserStats(interaction.guild.id, interaction.user.id);
+
+  const embed = new EmbedBuilder()
+    .setColor(0x8b5cf6)
+    .setTitle("⚔️ SHIZU — Haftalık Sıralama")
+    .setDescription(lines)
+    .addFields({
+      name: "Senin durumun",
+      value: `💬 **${me.chat_messages}** mesaj\n🎙️ **${formatDuration(me.voice_seconds)}** sesli aktivite`,
+      inline: false
+    })
+    .setFooter({ text: "Her Pazar 23:59'da sıfırlanır • İlk 3'e özel rol" })
+    .setTimestamp();
+
+  await interaction.reply({ embeds: [embed] });
+}
+
+module.exports = { data, execute };

@@ -1,0 +1,903 @@
+[2026-10-04 12:10:50.616] [INFO] Command yüklendi: /ban
+[2026-10-04 12:10:50.634] [INFO] Command yüklendi: /clear
+[2026-10-04 12:10:50.636] [INFO] Command yüklendi: /kick
+[2026-10-04 12:10:50.638] [INFO] Command yüklendi: /ping
+[2026-10-04 12:10:50.641] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:10:50.643] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:10:50.644] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:10:50.646] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:10:50.647] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:10:50.649] [INFO] Command yüklendi: /warn
+[2026-10-04 12:10:50.650] [INFO] Command yüklendi: /warnings
+[2026-10-04 12:10:52.278] [INFO] Discord login isteği gönderildi.
+[2026-10-04 12:10:52.409] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 12:10:52.409] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:10:52.410] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:10:52.410] [INFO] Command sayısı: 11
+[2026-10-04 12:10:52.411] [ERROR] Guild verisi yüklenemedi: TsukiSub
+[2026-10-04 12:10:52.411] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:115:23)
+    at Object.onceWrapper (node:events:634:26)
+    at Client.emit (node:events:519:28)
+    at WebSocketManager.triggerClientReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:386:21)
+    at WebSocketManager.checkShardsReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:368:10)
+    at WebSocketShard.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:198:16)
+    at WebSocketShard.emit (node:events:519:28)
+    at WebSocketShard.checkReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:184:12)
+    at WebSocketShard.gotGuild (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:158:10)
+    at WebSocketManager.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:238:15)
+[2026-10-04 12:10:52.412] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:10:52.413] [ERROR] (node:21260) DeprecationWarning: The ready event has been renamed to clientReady to distinguish it from the gateway READY event and will only emit under that name in v15. Please use clientReady instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2026-10-04 12:10:52.413] [WARN] NODE WARNING
+[2026-10-04 12:10:52.414] [WARN] DeprecationWarning
+[2026-10-04 12:10:52.414] [WARN] The ready event has been renamed to clientReady to distinguish it from the gateway READY event and will only emit under that name in v15. Please use clientReady instead.
+[2026-10-04 12:10:52.415] [WARN] DeprecationWarning: The ready event has been renamed to clientReady to distinguish it from the gateway READY event and will only emit under that name in v15. Please use clientReady instead.
+    at WebSocketManager.triggerClientReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:389:15)
+    at WebSocketManager.checkShardsReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:368:10)
+    at WebSocketShard.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:198:16)
+    at WebSocketShard.emit (node:events:519:28)
+    at WebSocketShard.checkReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:184:12)
+    at WebSocketShard.gotGuild (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:158:10)
+    at WebSocketManager.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:238:15)
+    at WebSocketManager.emit (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\@vladfrangu\async_event_emitter\dist\index.cjs:2504:31)
+    at WebSocketShard.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\@discordjs\ws\dist\index.js:1190:51)
+    at WebSocketShard.emit (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\@vladfrangu\async_event_emitter\dist\index.cjs:2504:31)
+[2026-10-04 12:12:40.138] [INFO] SIGINT alındı. Bot kapatılıyor...
+[2026-10-04 12:13:28.844] [INFO] Command yüklendi: /ban
+[2026-10-04 12:13:28.860] [INFO] Command yüklendi: /clear
+[2026-10-04 12:13:28.863] [INFO] Command yüklendi: /kick
+[2026-10-04 12:13:28.865] [INFO] Command yüklendi: /ping
+[2026-10-04 12:13:28.866] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:13:28.868] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:13:28.869] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:13:28.871] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:13:28.872] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:13:28.874] [INFO] Command yüklendi: /warn
+[2026-10-04 12:13:28.875] [INFO] Command yüklendi: /warnings
+[2026-10-04 12:13:28.876] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 12:13:32.016] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 12:13:32.305] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 12:13:32.305] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:13:32.306] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:13:32.307] [INFO] Command sayısı: 11
+[2026-10-04 12:13:32.307] [ERROR] Guild verisi yüklenemedi: TsukiSub (1554822506056130580)
+[2026-10-04 12:13:32.308] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:136:23)
+    at Object.onceWrapper (node:events:634:26)
+    at Client.emit (node:events:519:28)
+    at WebSocketManager.triggerClientReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:401:17)
+    at WebSocketManager.checkShardsReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:368:10)
+    at WebSocketShard.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:198:16)
+    at WebSocketShard.emit (node:events:519:28)
+    at WebSocketShard.checkReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:184:12)
+    at WebSocketShard.gotGuild (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:158:10)
+    at WebSocketManager.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:238:15)
+[2026-10-04 12:13:32.308] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:14:56.665] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 12:15:00.396] [INFO] Command yüklendi: /ban
+[2026-10-04 12:15:00.411] [INFO] Command yüklendi: /clear
+[2026-10-04 12:15:00.412] [INFO] Command yüklendi: /kick
+[2026-10-04 12:15:00.413] [INFO] Command yüklendi: /ping
+[2026-10-04 12:15:00.414] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:15:00.416] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:15:00.417] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:15:00.419] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:15:00.420] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:15:00.421] [INFO] Command yüklendi: /warn
+[2026-10-04 12:15:00.423] [INFO] Command yüklendi: /warnings
+[2026-10-04 12:15:00.423] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 12:15:05.285] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 12:15:05.445] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 12:15:05.446] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:15:05.447] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:15:05.447] [INFO] Command sayısı: 11
+[2026-10-04 12:15:05.448] [ERROR] Guild verisi yüklenemedi: TsukiSub (1554822506056130580)
+[2026-10-04 12:15:05.448] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:136:23)
+    at Object.onceWrapper (node:events:634:26)
+    at Client.emit (node:events:519:28)
+    at WebSocketManager.triggerClientReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:401:17)
+    at WebSocketManager.checkShardsReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:368:10)
+    at WebSocketShard.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:198:16)
+    at WebSocketShard.emit (node:events:519:28)
+    at WebSocketShard.checkReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:184:12)
+    at WebSocketShard.gotGuild (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:158:10)
+    at WebSocketManager.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:238:15)
+[2026-10-04 12:15:05.449] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:17:50.324] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 12:18:08.805] [INFO] Command yüklendi: /ban
+[2026-10-04 12:18:08.821] [INFO] Command yüklendi: /clear
+[2026-10-04 12:18:08.822] [INFO] Command yüklendi: /kick
+[2026-10-04 12:18:08.824] [INFO] Command yüklendi: /ping
+[2026-10-04 12:18:08.825] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:18:08.827] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:18:08.828] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:18:08.830] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:18:08.832] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:18:08.834] [INFO] Command yüklendi: /warn
+[2026-10-04 12:18:08.835] [INFO] Command yüklendi: /warnings
+[2026-10-04 12:18:08.836] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 12:18:13.100] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 12:18:13.299] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 12:18:13.300] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:18:13.301] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:18:13.301] [INFO] Command sayısı: 11
+[2026-10-04 12:18:13.302] [ERROR] Guild verisi yüklenemedi: TsukiSub (1554822506056130580)
+[2026-10-04 12:18:13.302] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:136:23)
+    at Object.onceWrapper (node:events:634:26)
+    at Client.emit (node:events:519:28)
+    at WebSocketManager.triggerClientReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:401:17)
+    at WebSocketManager.checkShardsReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:368:10)
+    at WebSocketShard.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:198:16)
+    at WebSocketShard.emit (node:events:519:28)
+    at WebSocketShard.checkReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:184:12)
+    at WebSocketShard.gotGuild (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:158:10)
+    at WebSocketManager.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:238:15)
+[2026-10-04 12:18:13.303] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:23:38.386] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 12:23:45.452] [INFO] Command yüklendi: /ban
+[2026-10-04 12:23:45.468] [INFO] Command yüklendi: /clear
+[2026-10-04 12:23:45.472] [INFO] Command yüklendi: /kick
+[2026-10-04 12:23:45.473] [INFO] Command yüklendi: /ping
+[2026-10-04 12:23:45.474] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:23:45.476] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:23:45.478] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:23:45.480] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:23:45.482] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:23:45.484] [INFO] Command yüklendi: /warn
+[2026-10-04 12:23:45.485] [INFO] Command yüklendi: /warnings
+[2026-10-04 12:23:45.486] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 12:23:50.123] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 12:23:50.496] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 12:23:50.497] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:23:50.498] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:23:50.499] [INFO] Command sayısı: 11
+[2026-10-04 12:23:50.500] [ERROR] Guild verisi yüklenemedi: TsukiSub (1554822506056130580)
+[2026-10-04 12:23:50.501] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:136:23)
+    at Object.onceWrapper (node:events:634:26)
+    at Client.emit (node:events:519:28)
+    at WebSocketManager.triggerClientReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:401:17)
+    at WebSocketManager.checkShardsReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:368:10)
+    at WebSocketShard.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:198:16)
+    at WebSocketShard.emit (node:events:519:28)
+    at WebSocketShard.checkReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:184:12)
+    at WebSocketShard.gotGuild (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:158:10)
+    at WebSocketManager.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:238:15)
+[2026-10-04 12:23:50.504] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:27:03.639] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 12:27:20.440] [INFO] Command yüklendi: /ban
+[2026-10-04 12:27:20.456] [INFO] Command yüklendi: /clear
+[2026-10-04 12:27:20.461] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 12:27:20.462] [INFO] Command yüklendi: /kick
+[2026-10-04 12:27:20.464] [INFO] Command yüklendi: /ping
+[2026-10-04 12:27:20.466] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:27:20.468] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:27:20.470] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:27:20.473] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:27:20.475] [INFO] Command yüklendi: /unwarn
+[2026-10-04 12:27:20.477] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:27:20.480] [INFO] Command yüklendi: /warn
+[2026-10-04 12:27:20.482] [INFO] Command yüklendi: /warnings
+[2026-10-04 12:27:20.483] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 12:27:27.290] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 12:27:27.394] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 12:27:27.395] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:27:27.396] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:27:27.396] [INFO] Command sayısı: 13
+[2026-10-04 12:27:27.397] [ERROR] Guild verisi yüklenemedi: TsukiSub (1554822506056130580)
+[2026-10-04 12:27:27.398] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:136:23)
+    at Object.onceWrapper (node:events:634:26)
+    at Client.emit (node:events:519:28)
+    at WebSocketManager.triggerClientReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:401:17)
+    at WebSocketManager.checkShardsReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:368:10)
+    at WebSocketShard.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:198:16)
+    at WebSocketShard.emit (node:events:519:28)
+    at WebSocketShard.checkReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:184:12)
+    at WebSocketShard.gotGuild (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:158:10)
+    at WebSocketManager.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:238:15)
+[2026-10-04 12:27:27.399] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:28:57.101] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 12:30:43.219] [INFO] Komut yüklendi: /ban
+[2026-10-04 12:30:43.237] [INFO] Komut yüklendi: /clear
+[2026-10-04 12:30:43.239] [ERROR] Komut yüklenemedi: clearwarning.js
+[2026-10-04 12:30:43.240] [ERROR] Error: Cannot find module '../utils/warningsStore'
+Require stack:
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\clearwarning.js
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at Object.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\clearwarning.js:8:5)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+[2026-10-04 12:30:43.242] [INFO] Komut yüklendi: /kick
+[2026-10-04 12:30:43.243] [INFO] Komut yüklendi: /ping
+[2026-10-04 12:30:43.245] [INFO] Komut yüklendi: /serverinfo
+[2026-10-04 12:30:43.247] [INFO] Komut yüklendi: /setlog
+[2026-10-04 12:30:43.249] [INFO] Komut yüklendi: /setwelcome
+[2026-10-04 12:30:43.252] [INFO] Komut yüklendi: /timeout
+[2026-10-04 12:30:43.253] [ERROR] Komut yüklenemedi: unwarn.js
+[2026-10-04 12:30:43.254] [ERROR] Error: Cannot find module '../utils/warningsStore'
+Require stack:
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\unwarn.js
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at Object.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\unwarn.js:8:5)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+[2026-10-04 12:30:43.257] [INFO] Komut yüklendi: /userinfo
+[2026-10-04 12:30:43.258] [ERROR] Komut yüklenemedi: warn.js
+[2026-10-04 12:30:43.259] [ERROR] Error: Cannot find module '../utils/warningsStore'
+Require stack:
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warn.js
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at Object.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warn.js:10:5)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+[2026-10-04 12:30:43.261] [ERROR] Komut yüklenemedi: warnings.js
+[2026-10-04 12:30:43.262] [ERROR] Error: Cannot find module '../utils/warningsStore'
+Require stack:
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warnings.js
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at Object.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warnings.js:9:5)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+[2026-10-04 12:30:43.263] [INFO] Toplam 9 komut yüklendi.
+[2026-10-04 12:30:43.264] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 12:30:45.505] [SUCCESS] Bot giriş yaptı: Shizu#2217
+[2026-10-04 12:30:45.506] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:30:45.507] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:30:45.507] [INFO] Komut sayısı: 9
+[2026-10-04 12:30:45.508] [ERROR] Guild verisi yüklenemedi: TsukiSub
+[2026-10-04 12:30:45.509] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:176:19)
+    at Object.onceWrapper (node:events:634:26)
+    at Client.emit (node:events:519:28)
+    at WebSocketManager.triggerClientReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:401:17)
+    at WebSocketManager.checkShardsReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:368:10)
+    at WebSocketShard.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:198:16)
+    at WebSocketShard.emit (node:events:519:28)
+    at WebSocketShard.checkReady (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:184:12)
+    at WebSocketShard.gotGuild (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketShard.js:158:10)
+    at WebSocketManager.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\client\websocket\WebSocketManager.js:238:15)
+[2026-10-04 12:30:45.509] [SUCCESS] Shizu hazır.
+[2026-10-04 12:33:16.020] [INFO] SIGINT alındı. Bot kapatılıyor...
+[2026-10-04 12:33:16.022] [SUCCESS] Bot güvenli şekilde kapatıldı.
+[2026-10-04 12:33:20.180] [INFO] Command yüklendi: /ban
+[2026-10-04 12:33:20.197] [INFO] Command yüklendi: /clear
+[2026-10-04 12:33:20.199] [ERROR] Command yüklenemedi: clearwarning.js
+[2026-10-04 12:33:20.200] [ERROR] Error: Cannot find module '../utils/warningsStore'
+Require stack:
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\clearwarning.js
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at Object.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\clearwarning.js:8:5)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+[2026-10-04 12:33:20.202] [INFO] Command yüklendi: /kick
+[2026-10-04 12:33:20.203] [INFO] Command yüklendi: /ping
+[2026-10-04 12:33:20.205] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:33:20.208] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:33:20.210] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:33:20.212] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:33:20.214] [ERROR] Command yüklenemedi: unwarn.js
+[2026-10-04 12:33:20.214] [ERROR] Error: Cannot find module '../utils/warningsStore'
+Require stack:
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\unwarn.js
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at Object.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\unwarn.js:8:5)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+[2026-10-04 12:33:20.216] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:33:20.218] [ERROR] Command yüklenemedi: warn.js
+[2026-10-04 12:33:20.218] [ERROR] Error: Cannot find module '../utils/warningsStore'
+Require stack:
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warn.js
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at Object.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warn.js:10:5)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+[2026-10-04 12:33:20.220] [ERROR] Command yüklenemedi: warnings.js
+[2026-10-04 12:33:20.221] [ERROR] Error: Cannot find module '../utils/warningsStore'
+Require stack:
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warnings.js
+- C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at Object.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warnings.js:9:5)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+[2026-10-04 12:33:20.221] [INFO] Toplam 9 command yüklendi.
+[2026-10-04 12:33:20.222] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 12:33:21.872] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 12:33:21.989] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 12:33:21.989] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:33:21.990] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:33:21.991] [INFO] Command sayısı: 9
+[2026-10-04 12:33:22.453] [SUCCESS] Log kanalı hazır: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 12:33:22.453] [ERROR] Guild verisi yüklenemedi: TsukiSub (1554822506056130580)
+[2026-10-04 12:33:22.454] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:238:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-10-04 12:33:22.455] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:34:25.502] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 12:37:58.446] [INFO] Command yüklendi: /ban
+[2026-10-04 12:37:58.462] [INFO] Command yüklendi: /clear
+[2026-10-04 12:37:58.465] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 12:37:58.466] [INFO] Command yüklendi: /kick
+[2026-10-04 12:37:58.468] [INFO] Command yüklendi: /ping
+[2026-10-04 12:37:58.469] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:37:58.471] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:37:58.473] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:37:58.475] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:37:58.477] [INFO] Command yüklendi: /unwarn
+[2026-10-04 12:37:58.478] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:37:58.480] [INFO] Command yüklendi: /warn
+[2026-10-04 12:37:58.481] [INFO] Command yüklendi: /warnings
+[2026-10-04 12:37:58.482] [INFO] Toplam 13 command yüklendi.
+[2026-10-04 12:37:58.483] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 12:38:00.071] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 12:38:00.203] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 12:38:00.203] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:38:00.204] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:38:00.205] [INFO] Command sayısı: 13
+[2026-10-04 12:38:01.089] [SUCCESS] Log kanalı hazır: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 12:38:01.090] [ERROR] Guild verisi yüklenemedi: TsukiSub (1554822506056130580)
+[2026-10-04 12:38:01.090] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:238:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-10-04 12:38:01.091] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:39:58.127] [INFO] Command çalıştırılıyor: /warn | Kullanıcı: lyta347 (514393673614622720) | Sunucu: TsukiSub
+[2026-10-04 12:39:58.131] [ERROR] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-10-04 12:39:58.132] [ERROR] UYARI SİSTEMİ HATASI
+[2026-10-04 12:39:58.132] [ERROR] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-10-04 12:39:58.133] [ERROR] Komut: warn
+[2026-10-04 12:39:58.134] [ERROR] Kullanıcı: lyta347
+[2026-10-04 12:39:58.134] [ERROR] User ID: 514393673614622720
+[2026-10-04 12:39:58.135] [ERROR] Sunucu: TsukiSub
+[2026-10-04 12:39:58.136] [ERROR] Guild ID: 1554822506056130580
+[2026-10-04 12:39:58.136] [ERROR] Kanal: 💭︱genel-sohbet
+[2026-10-04 12:39:58.138] [ERROR] Channel ID: 1554936695906893855
+[2026-10-04 12:39:58.138] [ERROR] Hata tipi: Error
+[2026-10-04 12:39:58.139] [ERROR] Hata kodu: Yok
+[2026-10-04 12:39:58.140] [ERROR] Hata mesajı: Uyarı kaydedilemedi: Uyarı kaydedilemedi: geçersiz veri.
+[2026-10-04 12:39:58.141] [ERROR] Stack trace:
+[2026-10-04 12:39:58.142] [ERROR] Error: Uyarı kaydedilemedi: Uyarı kaydedilemedi: geçersiz veri.
+    at Object.execute (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warn.js:138:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:320:13)
+[2026-10-04 12:39:58.142] [ERROR] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-10-04 12:39:58.148] [ERROR] (node:9260) Warning: Supplying "ephemeral" for interaction response options is deprecated. Utilize flags instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2026-10-04 12:39:58.149] [WARN] NODE WARNING
+[2026-10-04 12:39:58.150] [WARN] Warning
+[2026-10-04 12:39:58.151] [WARN] Supplying "ephemeral" for interaction response options is deprecated. Utilize flags instead.
+[2026-10-04 12:39:58.152] [WARN] Warning: Supplying "ephemeral" for interaction response options is deprecated. Utilize flags instead.
+    at ChatInputCommandInteraction.reply (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\structures\interfaces\InteractionResponses.js:167:19)
+    at handleWarningError (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\utils\warningErrorHandler.js:126:27)
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:342:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-10-04 12:41:11.035] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 12:41:34.120] [INFO] Command yÃ¼klendi: /ban
+[2026-10-04 12:41:34.136] [INFO] Command yÃ¼klendi: /clear
+[2026-10-04 12:41:34.138] [INFO] Command yÃ¼klendi: /clearwarnings
+[2026-10-04 12:41:34.140] [INFO] Command yÃ¼klendi: /kick
+[2026-10-04 12:41:34.141] [INFO] Command yÃ¼klendi: /ping
+[2026-10-04 12:41:34.142] [INFO] Command yÃ¼klendi: /serverinfo
+[2026-10-04 12:41:34.144] [INFO] Command yÃ¼klendi: /setlog
+[2026-10-04 12:41:34.146] [INFO] Command yÃ¼klendi: /setwelcome
+[2026-10-04 12:41:34.147] [INFO] Command yÃ¼klendi: /timeout
+[2026-10-04 12:41:34.149] [INFO] Command yÃ¼klendi: /unwarn
+[2026-10-04 12:41:34.151] [INFO] Command yÃ¼klendi: /userinfo
+[2026-10-04 12:41:34.153] [INFO] Command yÃ¼klendi: /warn
+[2026-10-04 12:41:34.154] [INFO] Command yÃ¼klendi: /warnings
+[2026-10-04 12:41:34.155] [INFO] Toplam 13 command yÃ¼klendi.
+[2026-10-04 12:41:34.156] [INFO] Discord'a baÄŸlanÄ±lÄ±yor...
+[2026-10-04 12:41:36.908] [INFO] Discord login isteÄŸi baÅŸarÄ±yla gÃ¶nderildi.
+[2026-10-04 12:41:37.045] [SUCCESS] Shizu olarak giriÅŸ yapÄ±ldÄ±: Shizu#2217
+[2026-10-04 12:41:37.046] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:41:37.046] [INFO] Sunucu sayÄ±sÄ±: 1
+[2026-10-04 12:41:37.047] [INFO] Command sayÄ±sÄ±: 13
+[2026-10-04 12:41:37.770] [SUCCESS] Log kanalÄ± hazÄ±r: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 12:41:37.772] [ERROR] Guild verisi yÃ¼klenemedi: TsukiSub (1554822506056130580)
+[2026-10-04 12:41:37.773] [ERROR] TypeError: loadGuild is not a function
+    at Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:238:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[2026-10-04 12:41:37.774] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:41:43.954] [INFO] Command Ã§alÄ±ÅŸtÄ±rÄ±lÄ±yor: /warn | KullanÄ±cÄ±: lyta347 (514393673614622720) | Sunucu: TsukiSub
+[2026-10-04 12:41:43.958] [ERROR] â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+[2026-10-04 12:41:43.959] [ERROR] UYARI SÄ°STEMÄ° HATASI
+[2026-10-04 12:41:43.960] [ERROR] â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+[2026-10-04 12:41:43.960] [ERROR] Komut: warn
+[2026-10-04 12:41:43.961] [ERROR] KullanÄ±cÄ±: lyta347
+[2026-10-04 12:41:43.962] [ERROR] User ID: 514393673614622720
+[2026-10-04 12:41:43.963] [ERROR] Sunucu: TsukiSub
+[2026-10-04 12:41:43.963] [ERROR] Guild ID: 1554822506056130580
+[2026-10-04 12:41:43.964] [ERROR] Kanal: 💭︱genel-sohbet
+[2026-10-04 12:41:43.965] [ERROR] Channel ID: 1554936695906893855
+[2026-10-04 12:41:43.966] [ERROR] Hata tipi: Error
+[2026-10-04 12:41:43.967] [ERROR] Hata kodu: Yok
+[2026-10-04 12:41:43.967] [ERROR] Hata mesajÄ±: UyarÄ± kaydedilemedi: Uyarı kaydedilemedi: geçersiz veri.
+[2026-10-04 12:41:43.968] [ERROR] Stack trace:
+[2026-10-04 12:41:43.969] [ERROR] Error: UyarÄ± kaydedilemedi: Uyarı kaydedilemedi: geçersiz veri.
+    at Object.execute (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warn.js:138:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:320:13)
+[2026-10-04 12:41:43.970] [ERROR] â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+[2026-10-04 12:42:06.531] [INFO] SIGINT alÄ±ndÄ±. Shizu kapatÄ±lÄ±yor...
+[2026-10-04 12:45:31.466] [INFO] Command yÃ¼klendi: /ban
+[2026-10-04 12:45:31.482] [INFO] Command yÃ¼klendi: /clear
+[2026-10-04 12:45:31.486] [INFO] Command yÃ¼klendi: /clearwarnings
+[2026-10-04 12:45:31.488] [INFO] Command yÃ¼klendi: /kick
+[2026-10-04 12:45:31.490] [INFO] Command yÃ¼klendi: /ping
+[2026-10-04 12:45:31.491] [INFO] Command yÃ¼klendi: /serverinfo
+[2026-10-04 12:45:31.493] [INFO] Command yÃ¼klendi: /setlog
+[2026-10-04 12:45:31.495] [INFO] Command yÃ¼klendi: /setwelcome
+[2026-10-04 12:45:31.497] [INFO] Command yÃ¼klendi: /timeout
+[2026-10-04 12:45:31.499] [INFO] Command yÃ¼klendi: /unwarn
+[2026-10-04 12:45:31.500] [INFO] Command yÃ¼klendi: /userinfo
+[2026-10-04 12:45:31.502] [INFO] Command yÃ¼klendi: /warn
+[2026-10-04 12:45:31.504] [INFO] Command yÃ¼klendi: /warnings
+[2026-10-04 12:45:31.505] [INFO] Toplam 13 command yÃ¼klendi.
+[2026-10-04 12:45:31.506] [INFO] Discord'a baÄŸlanÄ±lÄ±yor...
+[2026-10-04 12:45:33.016] [INFO] Discord login isteÄŸi baÅŸarÄ±yla gÃ¶nderildi.
+[2026-10-04 12:45:33.123] [SUCCESS] Shizu olarak giriÅŸ yapÄ±ldÄ±: Shizu#2217
+[2026-10-04 12:45:33.124] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:45:33.125] [INFO] Sunucu sayÄ±sÄ±: 1
+[2026-10-04 12:45:33.125] [INFO] Command sayÄ±sÄ±: 13
+[2026-10-04 12:45:33.866] [SUCCESS] Log kanalÄ± hazÄ±r: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 12:45:33.868] [INFO] Guild verisi yÃ¼klendi: TsukiSub (1554822506056130580)
+[2026-10-04 12:45:33.868] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:45:42.160] [INFO] Command Ã§alÄ±ÅŸtÄ±rÄ±lÄ±yor: /warn | KullanÄ±cÄ±: lyta347 (514393673614622720) | Sunucu: TsukiSub
+[2026-10-04 12:45:43.187] [INFO] Command baÅŸarÄ±yla tamamlandÄ±: /warn | KullanÄ±cÄ±: lyta347
+[2026-10-04 12:46:57.758] [INFO] SIGINT alÄ±ndÄ±. Shizu kapatÄ±lÄ±yor...
+[2026-10-04 12:47:04.316] [INFO] Command yÃ¼klendi: /ban
+[2026-10-04 12:47:04.332] [INFO] Command yÃ¼klendi: /clear
+[2026-10-04 12:47:04.334] [INFO] Command yÃ¼klendi: /clearwarnings
+[2026-10-04 12:47:04.336] [INFO] Command yÃ¼klendi: /kick
+[2026-10-04 12:47:04.337] [INFO] Command yÃ¼klendi: /ping
+[2026-10-04 12:47:04.339] [INFO] Command yÃ¼klendi: /serverinfo
+[2026-10-04 12:47:04.341] [INFO] Command yÃ¼klendi: /setlog
+[2026-10-04 12:47:04.342] [INFO] Command yÃ¼klendi: /setwelcome
+[2026-10-04 12:47:04.344] [INFO] Command yÃ¼klendi: /timeout
+[2026-10-04 12:47:04.346] [INFO] Command yÃ¼klendi: /unwarn
+[2026-10-04 12:47:04.348] [INFO] Command yÃ¼klendi: /userinfo
+[2026-10-04 12:47:04.350] [INFO] Command yÃ¼klendi: /warn
+[2026-10-04 12:47:04.352] [INFO] Command yÃ¼klendi: /warnings
+[2026-10-04 12:47:04.352] [INFO] Toplam 13 command yÃ¼klendi.
+[2026-10-04 12:47:04.353] [INFO] Discord'a baÄŸlanÄ±lÄ±yor...
+[2026-10-04 12:47:05.964] [INFO] Discord login isteÄŸi baÅŸarÄ±yla gÃ¶nderildi.
+[2026-10-04 12:47:06.110] [SUCCESS] Shizu olarak giriÅŸ yapÄ±ldÄ±: Shizu#2217
+[2026-10-04 12:47:06.110] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:47:06.111] [INFO] Sunucu sayÄ±sÄ±: 1
+[2026-10-04 12:47:06.112] [INFO] Command sayÄ±sÄ±: 13
+[2026-10-04 12:47:06.932] [SUCCESS] Log kanalÄ± hazÄ±r: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 12:47:06.934] [INFO] Guild verisi yÃ¼klendi: TsukiSub (1554822506056130580)
+[2026-10-04 12:47:06.935] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:47:10.555] [INFO] Command Ã§alÄ±ÅŸtÄ±rÄ±lÄ±yor: /warn | KullanÄ±cÄ±: lyta347 (514393673614622720) | Sunucu: TsukiSub
+[2026-10-04 12:47:12.910] [ERROR] Warn log gönderilemedi: DiscordAPIError[50006]: Cannot send an empty message
+    at handleErrors (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\@discordjs\rest\dist\index.js:791:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SequentialHandler.runRequest (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\@discordjs\rest\dist\index.js:1198:23)
+    at async SequentialHandler.queueRequest (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\@discordjs\rest\dist\index.js:1029:14)
+    at async _REST.request (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\@discordjs\rest\dist\index.js:1342:22)
+    at async TextChannel.send (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\discord.js\src\structures\interfaces\TextBasedChannel.js:195:15)
+    at async sendLog (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\utils\logChannel.js:119:5)
+    at async Object.execute (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\commands\warn.js:193:13)
+    at async Client.<anonymous> (C:\Users\pc\OneDrive\Masaüstü\discord-bot\src\index.js:320:13)
+[2026-10-04 12:47:12.913] [INFO] Command baÅŸarÄ±yla tamamlandÄ±: /warn | KullanÄ±cÄ±: lyta347
+[2026-10-04 12:48:31.605] [INFO] SIGINT alÄ±ndÄ±. Shizu kapatÄ±lÄ±yor...
+[2026-10-04 12:48:34.137] [INFO] Command yÃ¼klendi: /ban
+[2026-10-04 12:48:34.152] [INFO] Command yÃ¼klendi: /clear
+[2026-10-04 12:48:34.155] [INFO] Command yÃ¼klendi: /clearwarnings
+[2026-10-04 12:48:34.156] [INFO] Command yÃ¼klendi: /kick
+[2026-10-04 12:48:34.158] [INFO] Command yÃ¼klendi: /ping
+[2026-10-04 12:48:34.159] [INFO] Command yÃ¼klendi: /serverinfo
+[2026-10-04 12:48:34.161] [INFO] Command yÃ¼klendi: /setlog
+[2026-10-04 12:48:34.163] [INFO] Command yÃ¼klendi: /setwelcome
+[2026-10-04 12:48:34.165] [INFO] Command yÃ¼klendi: /timeout
+[2026-10-04 12:48:34.167] [INFO] Command yÃ¼klendi: /unwarn
+[2026-10-04 12:48:34.168] [INFO] Command yÃ¼klendi: /userinfo
+[2026-10-04 12:48:34.170] [INFO] Command yÃ¼klendi: /warn
+[2026-10-04 12:48:34.172] [INFO] Command yÃ¼klendi: /warnings
+[2026-10-04 12:48:34.173] [INFO] Toplam 13 command yÃ¼klendi.
+[2026-10-04 12:48:34.174] [INFO] Discord'a baÄŸlanÄ±lÄ±yor...
+[2026-10-04 12:48:35.993] [INFO] Discord login isteÄŸi baÅŸarÄ±yla gÃ¶nderildi.
+[2026-10-04 12:48:36.129] [SUCCESS] Shizu olarak giriÅŸ yapÄ±ldÄ±: Shizu#2217
+[2026-10-04 12:48:36.129] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:48:36.130] [INFO] Sunucu sayÄ±sÄ±: 1
+[2026-10-04 12:48:36.131] [INFO] Command sayÄ±sÄ±: 13
+[2026-10-04 12:48:36.132] [SUCCESS] Log kanalÄ± hazÄ±r: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 12:48:36.133] [INFO] Guild verisi yÃ¼klendi: TsukiSub (1554822506056130580)
+[2026-10-04 12:48:36.134] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:48:44.967] [INFO] Command Ã§alÄ±ÅŸtÄ±rÄ±lÄ±yor: /warn | KullanÄ±cÄ±: lyta347 (514393673614622720) | Sunucu: TsukiSub
+[2026-10-04 12:48:46.783] [INFO] Command baÅŸarÄ±yla tamamlandÄ±: /warn | KullanÄ±cÄ±: lyta347
+[2026-10-04 12:48:51.418] [INFO] Mesaj silindi | Sunucu: TsukiSub | Kanal: 📋・log | Mesaj ID: 1556241661414350858 | KullanÄ±cÄ±: Shizu#2217
+[2026-10-04 12:54:28.328] [INFO] SIGINT alÄ±ndÄ±. Shizu kapatÄ±lÄ±yor...
+[2026-10-04 12:54:35.358] [INFO] Command yÃ¼klendi: /ban
+[2026-10-04 12:54:35.376] [INFO] Command yÃ¼klendi: /clear
+[2026-10-04 12:54:35.378] [INFO] Command yÃ¼klendi: /clearwarnings
+[2026-10-04 12:54:35.380] [INFO] Command yÃ¼klendi: /kick
+[2026-10-04 12:54:35.381] [INFO] Command yÃ¼klendi: /ping
+[2026-10-04 12:54:35.383] [INFO] Command yÃ¼klendi: /serverinfo
+[2026-10-04 12:54:35.385] [INFO] Command yÃ¼klendi: /setlog
+[2026-10-04 12:54:35.386] [INFO] Command yÃ¼klendi: /setwelcome
+[2026-10-04 12:54:35.389] [INFO] Command yÃ¼klendi: /timeout
+[2026-10-04 12:54:35.391] [INFO] Command yÃ¼klendi: /unwarn
+[2026-10-04 12:54:35.393] [INFO] Command yÃ¼klendi: /userinfo
+[2026-10-04 12:54:35.395] [INFO] Command yÃ¼klendi: /warn
+[2026-10-04 12:54:35.398] [INFO] Command yÃ¼klendi: /warnings
+[2026-10-04 12:54:35.399] [INFO] Toplam 13 command yÃ¼klendi.
+[2026-10-04 12:54:35.400] [INFO] Discord'a baÄŸlanÄ±lÄ±yor...
+[2026-10-04 12:54:37.750] [INFO] Discord login isteÄŸi baÅŸarÄ±yla gÃ¶nderildi.
+[2026-10-04 12:54:37.891] [SUCCESS] Shizu olarak giriÅŸ yapÄ±ldÄ±: Shizu#2217
+[2026-10-04 12:54:37.891] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:54:37.892] [INFO] Sunucu sayÄ±sÄ±: 1
+[2026-10-04 12:54:37.893] [INFO] Command sayÄ±sÄ±: 13
+[2026-10-04 12:54:37.894] [SUCCESS] Log kanalÄ± hazÄ±r: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 12:54:37.895] [INFO] Guild verisi yÃ¼klendi: TsukiSub (1554822506056130580)
+[2026-10-04 12:54:37.896] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:55:43.168] [INFO] SIGINT alÄ±ndÄ±. Shizu kapatÄ±lÄ±yor...
+[2026-10-04 12:57:22.497] [INFO] Command yüklendi: /ban
+[2026-10-04 12:57:22.513] [INFO] Command yüklendi: /clear
+[2026-10-04 12:57:22.515] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 12:57:22.517] [INFO] Command yüklendi: /kick
+[2026-10-04 12:57:22.518] [INFO] Command yüklendi: /ping
+[2026-10-04 12:57:22.520] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:57:22.522] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:57:22.523] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:57:22.526] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:57:22.528] [INFO] Command yüklendi: /unwarn
+[2026-10-04 12:57:22.529] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:57:22.531] [INFO] Command yüklendi: /warn
+[2026-10-04 12:57:22.533] [INFO] Command yüklendi: /warnings
+[2026-10-04 12:57:22.534] [INFO] Toplam 13 command yüklendi.
+[2026-10-04 12:57:22.535] [INFO] Discord'a baÄŸlanÄ±lÄ±yor...
+[2026-10-04 12:57:24.157] [INFO] Discord login isteÄŸi baÅŸarÄ±yla gÃ¶nderildi.
+[2026-10-04 12:57:24.302] [SUCCESS] Shizu olarak giriÅŸ yapÄ±ldÄ±: Shizu#2217
+[2026-10-04 12:57:24.303] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:57:24.304] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:57:24.305] [INFO] Command sayısı: 13
+[2026-10-04 12:57:24.307] [SUCCESS] Log kanalÄ± hazÄ±r: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 12:57:24.308] [INFO] Guild verisi yüklendi: TsukiSub (1554822506056130580)
+[2026-10-04 12:57:24.309] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 12:57:40.502] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 12:57:42.017] [INFO] Command yüklendi: /ban
+[2026-10-04 12:57:42.033] [INFO] Command yüklendi: /clear
+[2026-10-04 12:57:42.035] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 12:57:42.037] [INFO] Command yüklendi: /kick
+[2026-10-04 12:57:42.038] [INFO] Command yüklendi: /ping
+[2026-10-04 12:57:42.039] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 12:57:42.041] [INFO] Command yüklendi: /setlog
+[2026-10-04 12:57:42.043] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 12:57:42.045] [INFO] Command yüklendi: /timeout
+[2026-10-04 12:57:42.046] [INFO] Command yüklendi: /unwarn
+[2026-10-04 12:57:42.048] [INFO] Command yüklendi: /userinfo
+[2026-10-04 12:57:42.049] [INFO] Command yüklendi: /warn
+[2026-10-04 12:57:42.051] [INFO] Command yüklendi: /warnings
+[2026-10-04 12:57:42.052] [INFO] Toplam 13 command yüklendi.
+[2026-10-04 12:57:42.053] [INFO] Discord'a baÄŸlanÄ±lÄ±yor...
+[2026-10-04 12:57:44.071] [INFO] Discord login isteÄŸi baÅŸarÄ±yla gÃ¶nderildi.
+[2026-10-04 12:57:44.203] [SUCCESS] Shizu olarak giriÅŸ yapÄ±ldÄ±: Shizu#2217
+[2026-10-04 12:57:44.203] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 12:57:44.204] [INFO] Sunucu sayısı: 1
+[2026-10-04 12:57:44.205] [INFO] Command sayısı: 13
+[2026-10-04 12:57:44.206] [SUCCESS] Log kanalÄ± hazÄ±r: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 12:57:44.207] [INFO] Guild verisi yüklendi: TsukiSub (1554822506056130580)
+[2026-10-04 12:57:44.208] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 13:01:01.725] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 14:16:36.266] [INFO] 🔄 14 slash command yükleniyor...
+[2026-10-04 14:16:37.113] [INFO] ✅ Slash command'lar test sunucusuna yüklendi.
+[2026-10-04 14:28:23.659] [INFO] Command yüklendi: /ban
+[2026-10-04 14:28:23.676] [INFO] Command yüklendi: /clear
+[2026-10-04 14:28:23.678] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 14:28:23.680] [INFO] Command yüklendi: /kick
+[2026-10-04 14:28:23.681] [INFO] Command yüklendi: /ping
+[2026-10-04 14:28:23.683] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 14:28:23.685] [INFO] Command yüklendi: /setlog
+[2026-10-04 14:28:23.687] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 14:28:23.690] [INFO] Command yüklendi: /ticket
+[2026-10-04 14:28:23.691] [INFO] Command yüklendi: /timeout
+[2026-10-04 14:28:23.693] [INFO] Command yüklendi: /unwarn
+[2026-10-04 14:28:23.695] [INFO] Command yüklendi: /userinfo
+[2026-10-04 14:28:23.697] [INFO] Command yüklendi: /warn
+[2026-10-04 14:28:23.698] [INFO] Command yüklendi: /warnings
+[2026-10-04 14:28:23.699] [INFO] Toplam 14 command yüklendi.
+[2026-10-04 14:28:23.700] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 14:28:25.599] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 14:28:25.746] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 14:28:25.746] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 14:28:25.747] [INFO] Sunucu sayısı: 1
+[2026-10-04 14:28:25.748] [INFO] Command sayısı: 14
+[2026-10-04 14:28:25.749] [SUCCESS] Log kanalı hazır: TsukiSub | #📋・log (1556237789111259156)
+[2026-10-04 14:28:25.750] [INFO] Guild verisi yüklendi: TsukiSub (1554822506056130580)
+[2026-10-04 14:28:25.751] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 14:43:54.168] [INFO] 🔄 14 slash command yükleniyor...
+[2026-10-04 14:43:55.191] [INFO] ✅ Slash command'lar test sunucusuna yüklendi.
+[2026-10-04 14:47:48.990] [INFO] 🔄 14 slash command yükleniyor...
+[2026-10-04 14:47:49.659] [INFO] ✅ Slash command'lar test sunucusuna yüklendi.
+[2026-10-04 14:52:43.829] [INFO] 🔄 14 slash command yükleniyor...
+[2026-10-04 14:52:44.974] [INFO] ✅ Slash command'lar test sunucusuna yüklendi.
+[2026-10-04 14:55:40.665] [INFO] 🔄 14 slash command yükleniyor...
+[2026-10-04 14:55:41.301] [INFO] ✅ Slash command'lar test sunucusuna yüklendi.
+[2026-10-04 17:21:18.845] [INFO] Command yüklendi: /ban
+[2026-10-04 17:21:18.861] [INFO] Command yüklendi: /clear
+[2026-10-04 17:21:18.863] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 17:21:18.865] [INFO] Command yüklendi: /kick
+[2026-10-04 17:21:18.866] [INFO] Command yüklendi: /ping
+[2026-10-04 17:21:18.867] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 17:21:18.869] [INFO] Command yüklendi: /setlog
+[2026-10-04 17:21:18.871] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 17:21:18.873] [INFO] Command yüklendi: /ticket
+[2026-10-04 17:21:18.875] [INFO] Command yüklendi: /timeout
+[2026-10-04 17:21:18.877] [INFO] Command yüklendi: /unwarn
+[2026-10-04 17:21:18.879] [INFO] Command yüklendi: /userinfo
+[2026-10-04 17:21:18.880] [INFO] Command yüklendi: /warn
+[2026-10-04 17:21:18.882] [INFO] Command yüklendi: /warnings
+[2026-10-04 17:21:18.883] [INFO] Toplam 14 command yüklendi.
+[2026-10-04 17:21:18.884] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 17:21:20.551] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 17:21:20.695] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 17:21:20.696] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 17:21:20.696] [INFO] Sunucu sayısı: 1
+[2026-10-04 17:21:20.697] [INFO] Command sayısı: 14
+[2026-10-04 17:21:20.698] [SUCCESS] Log kanalı hazır: Shizu | #📋・log (1556237789111259156)
+[2026-10-04 17:21:20.699] [INFO] Guild verisi yüklendi: Shizu (1554822506056130580)
+[2026-10-04 17:21:20.700] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 17:21:24.401] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 17:22:43.727] [INFO] Command yüklendi: /ban
+[2026-10-04 17:22:43.743] [INFO] Command yüklendi: /clear
+[2026-10-04 17:22:43.746] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 17:22:43.747] [INFO] Command yüklendi: /kick
+[2026-10-04 17:22:43.749] [INFO] Command yüklendi: /ping
+[2026-10-04 17:22:43.750] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 17:22:43.752] [INFO] Command yüklendi: /setlog
+[2026-10-04 17:22:43.754] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 17:22:43.757] [INFO] Command yüklendi: /ticket
+[2026-10-04 17:22:43.758] [INFO] Command yüklendi: /timeout
+[2026-10-04 17:22:43.761] [INFO] Command yüklendi: /unwarn
+[2026-10-04 17:22:43.762] [INFO] Command yüklendi: /userinfo
+[2026-10-04 17:22:43.764] [INFO] Command yüklendi: /warn
+[2026-10-04 17:22:43.766] [INFO] Command yüklendi: /warnings
+[2026-10-04 17:22:43.767] [INFO] Toplam 14 command yüklendi.
+[2026-10-04 17:22:43.767] [INFO] Discord'a bağlanılıyor...
+[2026-10-04 17:22:45.293] [INFO] Discord login isteği başarıyla gönderildi.
+[2026-10-04 17:22:45.426] [SUCCESS] Shizu olarak giriş yapıldı: Shizu#2217
+[2026-10-04 17:22:45.427] [INFO] Bot ID: 1556218681401540758
+[2026-10-04 17:22:45.428] [INFO] Sunucu sayısı: 1
+[2026-10-04 17:22:45.429] [INFO] Command sayısı: 14
+[2026-10-04 17:22:45.430] [SUCCESS] Log kanalı hazır: Shizu | #📋・log (1556237789111259156)
+[2026-10-04 17:22:45.431] [INFO] Guild verisi yüklendi: Shizu (1554822506056130580)
+[2026-10-04 17:22:45.431] [SUCCESS] Shizu tamamen aktif.
+[2026-10-04 17:22:48.129] [INFO] Mesaj silindi | Sunucu: Shizu | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:22:49.302] [WARN] Küfür filtresi | Kullanıcı: lyta347 (514393673614622720) | Sunucu: Shizu (1554822506056130580) | Kanal: #💭︱genel-sohbet (1554822506739933306)
+[2026-10-04 17:22:53.190] [INFO] Mesaj silindi | Sunucu: Shizu | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:22:53.679] [WARN] Küfür filtresi | Kullanıcı: lyta347 (514393673614622720) | Sunucu: Shizu (1554822506056130580) | Kanal: #💭︱genel-sohbet (1554822506739933306)
+[2026-10-04 17:22:54.585] [INFO] Mesaj silindi | Sunucu: Shizu | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:22:59.723] [INFO] Mesaj silindi | Sunucu: Shizu | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:23:53.752] [INFO] Mesaj silindi | Sunucu: Shizu | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:23:54.074] [WARN] Küfür mesajı silinemedi | Kullanıcı: lyta347 (514393673614622720) | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:23:59.504] [INFO] Mesaj silindi | Sunucu: Shizu | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:24:04.272] [INFO] Mesaj silindi | Sunucu: Shizu | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:24:04.636] [WARN] Küfür mesajı silinemedi | Kullanıcı: marshaltny (1242142662358990911) | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:24:09.904] [INFO] Mesaj silindi | Sunucu: Shizu | Kanal: #💭︱genel-sohbet
+[2026-10-04 17:24:43.329] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 18:40:57.033] [INFO] 🔄 16 slash command yükleniyor...
+[2026-10-04 18:40:57.534] [ERROR] Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+[2026-10-04 19:14:30.219] [INFO] 🔄 16 slash command yükleniyor...
+[2026-10-04 19:14:30.533] [ERROR] Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+[2026-10-04 19:14:56.314] [INFO] 🔄 16 slash command yükleniyor...
+[2026-10-04 19:14:56.606] [ERROR] Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+[2026-10-04 19:15:34.805] [INFO] 🔄 16 slash command yükleniyor...
+[2026-10-04 19:15:35.098] [ERROR] Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+[2026-10-04 19:16:15.698] [INFO] 🔄 16 slash command yükleniyor...
+[2026-10-04 19:16:15.725] [INFO] 🌐 Discord API bağlantısı deneniyor... (1/5)
+[2026-10-04 19:16:16.146] [ERROR] 
+[2026-10-04 19:16:16.147] [ERROR] ❌ Deploy denemesi 1/5 başarısız.
+[2026-10-04 19:16:16.149] [ERROR] ECONNRESET: read ECONNRESET
+[2026-10-04 19:16:16.150] [INFO] ⏳ 5 saniye sonra tekrar denenecek...
+[2026-10-04 19:16:21.164] [INFO] 🌐 Discord API bağlantısı deneniyor... (2/5)
+[2026-10-04 19:16:21.537] [ERROR] 
+[2026-10-04 19:16:21.538] [ERROR] ❌ Deploy denemesi 2/5 başarısız.
+[2026-10-04 19:16:21.539] [ERROR] ECONNRESET: read ECONNRESET
+[2026-10-04 19:16:21.540] [INFO] ⏳ 5 saniye sonra tekrar denenecek...
+[2026-10-04 19:16:26.542] [INFO] 🌐 Discord API bağlantısı deneniyor... (3/5)
+[2026-10-04 19:16:27.774] [ERROR] 
+[2026-10-04 19:16:27.775] [ERROR] ❌ Deploy denemesi 3/5 başarısız.
+[2026-10-04 19:16:27.776] [ERROR] ECONNRESET: read ECONNRESET
+[2026-10-04 19:16:27.777] [INFO] ⏳ 5 saniye sonra tekrar denenecek...
+[2026-10-04 20:28:51.728] [INFO] Command yüklendi: /ban
+[2026-10-04 20:28:51.770] [INFO] Command yüklendi: /clear
+[2026-10-04 20:28:51.814] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 20:28:52.159] [INFO] Command yüklendi: /kick
+[2026-10-04 20:28:52.172] [INFO] Command yüklendi: /ping
+[2026-10-04 20:28:52.194] [INFO] Command yüklendi: /rank
+[2026-10-04 20:28:52.206] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 20:28:52.218] [INFO] Command yüklendi: /setlog
+[2026-10-04 20:28:52.231] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 20:28:52.245] [INFO] Command yüklendi: /ticket
+[2026-10-04 20:28:52.583] [INFO] Command yüklendi: /timeout
+[2026-10-04 20:28:52.596] [INFO] Command yüklendi: /top
+[2026-10-04 20:28:53.732] [INFO] Command yüklendi: /unwarn
+[2026-10-04 20:28:53.749] [INFO] Command yüklendi: /userinfo
+[2026-10-04 20:28:54.082] [INFO] Command yüklendi: /warn
+[2026-10-04 20:28:54.666] [INFO] Command yüklendi: /warnings
+[2026-10-04 20:28:54.667] [INFO] Toplam 16 slash command yüklendi.
+[2026-10-04 20:29:00.862] [SUCCESS] Shizu giriş yaptı: Shizu#2217
+[2026-10-04 20:29:00.863] [INFO] Sunucu sayısı: 1
+[2026-10-04 20:29:00.865] [INFO] Sunucu hazır: Shizu
+[2026-10-04 20:29:00.866] [SUCCESS] Shizu tamamen hazır!
+[2026-10-04 20:29:15.955] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 20:29:15.957] [INFO] Shizu güvenli şekilde kapatıldı.
+[2026-10-04 20:29:17.331] [INFO] 🔄 16 slash command yükleniyor...
+[2026-10-04 20:29:17.346] [INFO] 🌐 Discord API bağlantısı deneniyor... (1/5)
+[2026-10-04 20:29:22.846] [INFO] 
+[2026-10-04 20:29:22.847] [INFO] ✅ Slash command'lar başarıyla yüklendi!
+[2026-10-04 20:29:22.849] [INFO] 📦 Toplam command: 16
+[2026-10-04 20:29:22.850] [INFO] 🎉 /rank ve /top dahil tüm komutlar hazır.
+[2026-10-04 21:32:15.954] [INFO] Command yüklendi: /ban
+[2026-10-04 21:32:15.990] [INFO] Command yüklendi: /clear
+[2026-10-04 21:32:16.015] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 21:32:17.732] [INFO] Command yüklendi: /kick
+[2026-10-04 21:32:17.748] [INFO] Command yüklendi: /ping
+[2026-10-04 21:32:18.041] [INFO] Command yüklendi: /rank
+[2026-10-04 21:32:18.054] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 21:32:18.071] [INFO] Command yüklendi: /setlog
+[2026-10-04 21:32:18.086] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 21:32:18.107] [INFO] Command yüklendi: /ticket
+[2026-10-04 21:32:18.917] [INFO] Command yüklendi: /timeout
+[2026-10-04 21:32:18.934] [INFO] Command yüklendi: /top
+[2026-10-04 21:32:19.543] [INFO] Command yüklendi: /unwarn
+[2026-10-04 21:32:19.558] [INFO] Command yüklendi: /userinfo
+[2026-10-04 21:32:20.690] [INFO] Command yüklendi: /warn
+[2026-10-04 21:32:20.692] [INFO] Command yüklendi: /warnings
+[2026-10-04 21:32:20.693] [INFO] Toplam 16 slash command yüklendi.
+[2026-10-04 21:32:20.962] [ERROR] Discord login hatası: Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+[2026-10-04 21:49:15.944] [INFO] 🔄 17 slash command yükleniyor...
+[2026-10-04 21:49:15.959] [INFO] 🌐 Discord API bağlantısı deneniyor... (1/5)
+[2026-10-04 21:49:16.237] [ERROR] 
+[2026-10-04 21:49:16.238] [ERROR] ❌ Deploy denemesi 1/5 başarısız.
+[2026-10-04 21:49:16.240] [ERROR] ECONNRESET: read ECONNRESET
+[2026-10-04 21:49:16.241] [INFO] ⏳ 5 saniye sonra tekrar denenecek...
+[2026-10-04 21:49:21.248] [INFO] 🌐 Discord API bağlantısı deneniyor... (2/5)
+[2026-10-04 21:49:21.488] [ERROR] 
+[2026-10-04 21:49:21.489] [ERROR] ❌ Deploy denemesi 2/5 başarısız.
+[2026-10-04 21:49:21.490] [ERROR] ECONNRESET: read ECONNRESET
+[2026-10-04 21:49:21.491] [INFO] ⏳ 5 saniye sonra tekrar denenecek...
+[2026-10-04 21:49:26.498] [INFO] 🌐 Discord API bağlantısı deneniyor... (3/5)
+[2026-10-04 21:49:26.761] [ERROR] 
+[2026-10-04 21:49:26.762] [ERROR] ❌ Deploy denemesi 3/5 başarısız.
+[2026-10-04 21:49:26.763] [ERROR] ECONNRESET: read ECONNRESET
+[2026-10-04 21:49:26.764] [INFO] ⏳ 5 saniye sonra tekrar denenecek...
+[2026-10-04 21:49:31.778] [INFO] 🌐 Discord API bağlantısı deneniyor... (4/5)
+[2026-10-04 21:49:42.372] [ERROR] 
+[2026-10-04 21:49:42.373] [ERROR] ❌ Deploy denemesi 4/5 başarısız.
+[2026-10-04 21:49:42.374] [ERROR] UND_ERR_CONNECT_TIMEOUT: Connect Timeout Error (attempted address: discord.com:443, timeout: 10000ms)
+[2026-10-04 21:49:42.375] [INFO] ⏳ 5 saniye sonra tekrar denenecek...
+[2026-10-04 21:49:47.388] [INFO] 🌐 Discord API bağlantısı deneniyor... (5/5)
+[2026-10-04 21:49:48.167] [INFO] 
+[2026-10-04 21:49:48.168] [INFO] ✅ Slash command'lar başarıyla yüklendi!
+[2026-10-04 21:49:48.169] [INFO] 📦 Toplam command: 17
+[2026-10-04 21:49:48.170] [INFO] 🎉 /rank ve /top dahil tüm komutlar hazır.
+[2026-10-04 21:49:59.371] [INFO] Command yüklendi: /ban
+[2026-10-04 21:49:59.387] [INFO] Command yüklendi: /clear
+[2026-10-04 21:49:59.389] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 21:49:59.391] [INFO] Command yüklendi: /kick
+[2026-10-04 21:49:59.392] [INFO] Command yüklendi: /ping
+[2026-10-04 21:49:59.462] [INFO] Command yüklendi: /rank
+[2026-10-04 21:49:59.464] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 21:49:59.466] [INFO] Command yüklendi: /setlevel
+[2026-10-04 21:49:59.468] [INFO] Command yüklendi: /setlog
+[2026-10-04 21:49:59.469] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 21:49:59.471] [INFO] Command yüklendi: /ticket
+[2026-10-04 21:49:59.473] [INFO] Command yüklendi: /timeout
+[2026-10-04 21:49:59.474] [INFO] Command yüklendi: /top
+[2026-10-04 21:49:59.476] [INFO] Command yüklendi: /unwarn
+[2026-10-04 21:49:59.478] [INFO] Command yüklendi: /userinfo
+[2026-10-04 21:49:59.480] [INFO] Command yüklendi: /warn
+[2026-10-04 21:49:59.482] [INFO] Command yüklendi: /warnings
+[2026-10-04 21:49:59.483] [INFO] Toplam 17 slash command yüklendi.
+[2026-10-04 21:50:01.555] [SUCCESS] Shizu giriş yaptı: Shizu#2217
+[2026-10-04 21:50:01.556] [INFO] Sunucu sayısı: 1
+[2026-10-04 21:50:01.557] [INFO] Sunucu hazır: Shizu
+[2026-10-04 21:50:01.558] [SUCCESS] Shizu tamamen hazır!
+[2026-10-04 21:50:09.030] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 21:50:09.032] [INFO] Shizu güvenli şekilde kapatıldı.
+[2026-10-04 21:53:55.514] [INFO] 🔄 17 slash command yükleniyor...
+[2026-10-04 21:53:55.530] [INFO] 🌐 Discord API bağlantısı deneniyor... (1/5)
+[2026-10-04 21:53:56.193] [INFO] 
+[2026-10-04 21:53:56.194] [INFO] ✅ Slash command'lar başarıyla yüklendi!
+[2026-10-04 21:53:56.195] [INFO] 📦 Toplam command: 17
+[2026-10-04 21:53:56.196] [INFO] 🎉 /rank ve /top dahil tüm komutlar hazır.
+[2026-10-04 21:54:00.216] [INFO] Command yüklendi: /ban
+[2026-10-04 21:54:00.232] [INFO] Command yüklendi: /clear
+[2026-10-04 21:54:00.234] [INFO] Command yüklendi: /clearwarnings
+[2026-10-04 21:54:00.236] [INFO] Command yüklendi: /kick
+[2026-10-04 21:54:00.237] [INFO] Command yüklendi: /ping
+[2026-10-04 21:54:00.302] [INFO] Command yüklendi: /rank
+[2026-10-04 21:54:00.304] [INFO] Command yüklendi: /serverinfo
+[2026-10-04 21:54:00.306] [INFO] Command yüklendi: /setlevel
+[2026-10-04 21:54:00.307] [INFO] Command yüklendi: /setlog
+[2026-10-04 21:54:00.309] [INFO] Command yüklendi: /setwelcome
+[2026-10-04 21:54:00.311] [INFO] Command yüklendi: /ticket
+[2026-10-04 21:54:00.313] [INFO] Command yüklendi: /timeout
+[2026-10-04 21:54:00.314] [INFO] Command yüklendi: /top
+[2026-10-04 21:54:00.316] [INFO] Command yüklendi: /unwarn
+[2026-10-04 21:54:00.318] [INFO] Command yüklendi: /userinfo
+[2026-10-04 21:54:00.319] [INFO] Command yüklendi: /warn
+[2026-10-04 21:54:00.321] [INFO] Command yüklendi: /warnings
+[2026-10-04 21:54:00.321] [INFO] Toplam 17 slash command yüklendi.
+[2026-10-04 21:54:02.023] [SUCCESS] Shizu giriş yaptı: Shizu#2217
+[2026-10-04 21:54:02.023] [INFO] Sunucu sayısı: 1
+[2026-10-04 21:54:02.025] [INFO] Sunucu hazır: Shizu
+[2026-10-04 21:54:02.026] [SUCCESS] Shizu tamamen hazır!
+[2026-10-04 21:54:03.170] [INFO] SIGINT alındı. Shizu kapatılıyor...
+[2026-10-04 21:54:03.172] [INFO] Shizu güvenli şekilde kapatıldı.
+[2026-10-04 22:12:56.651] [INFO] 🚀 19 komut yükleniyor...
+[2026-10-04 22:12:57.017] [ERROR] Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+[2026-10-04 22:13:10.942] [INFO] 🚀 19 komut yükleniyor...
+[2026-10-04 22:13:21.602] [ERROR] ConnectTimeoutError: Connect Timeout Error (attempted address: discord.com:443, timeout: 10000ms)
+    at onConnectTimeout (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\undici\lib\core\connect.js:237:24)
+    at Immediate._onImmediate (C:\Users\pc\OneDrive\Masaüstü\discord-bot\node_modules\undici\lib\core\connect.js:188:35)
+    at process.processImmediate (node:internal/timers:484:21)
+[2026-10-04 22:14:33.589] [INFO] 🚀 19 komut yükleniyor...
+[2026-10-04 22:14:35.916] [INFO] ✅ Guild komutları güncellendi: 1554822506056130580
