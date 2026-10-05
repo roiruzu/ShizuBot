@@ -1,152 +1,267 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('node:fs');
+const path = require('node:path');
 
-const dataDir = path.join(__dirname, "../../data");
-const dbFile = path.join(dataDir, "database.json");
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const DATA_FILE = path.join(DATA_DIR, 'activity.json');
 
-// Data klasörünü oluştur
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+const EMPTY_DATA = {
+    version: 1,
+    weekly: {},
+    archive: {}
+};
+
+function ensureStorage() {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+
+    if (!fs.existsSync(DATA_FILE)) {
+        fs.writeFileSync(
+            DATA_FILE,
+            JSON.stringify(EMPTY_DATA, null, 2),
+            'utf8'
+        );
+    }
 }
 
-// Database dosyasını oluştur
-if (!fs.existsSync(dbFile)) {
-    fs.writeFileSync(
-        dbFile,
-        JSON.stringify({ guilds: {} }, null, 2),
-        "utf8"
-    );
-}
+function readData() {
+    ensureStorage();
 
-// Database oku
-function read() {
     try {
         return JSON.parse(
-            fs.readFileSync(dbFile, "utf8")
+            fs.readFileSync(DATA_FILE, 'utf8')
         );
-    } catch (error) {
-        console.error(
-            "Database okunamadı:",
-            error
-        );
-
-        return {
-            guilds: {}
-        };
+    } catch {
+        writeData(EMPTY_DATA);
+        return structuredClone(EMPTY_DATA);
     }
 }
 
-// Database yaz
-function write(data) {
+function writeData(data) {
+    ensureStorage();
+
+    const tempFile = `${DATA_FILE}.tmp`;
+
     fs.writeFileSync(
-        dbFile,
+        tempFile,
         JSON.stringify(data, null, 2),
-        "utf8"
+        'utf8'
     );
+
+    fs.renameSync(tempFile, DATA_FILE);
 }
 
-// Sunucu verisini getir
-function getGuild(guildId) {
-    const data = read();
+function ensureUser(data, weekKey, guildId, userId) {
+    data.weekly[weekKey] ??= {};
+    data.weekly[weekKey][guildId] ??= {};
 
-    if (!data.guilds) {
-        data.guilds = {};
-    }
-
-    if (!data.guilds[guildId]) {
-        data.guilds[guildId] = {
-            welcomeChannelId: null,
-            logChannelId: null,
-            warnings: {}
-        };
-
-        write(data);
-    }
-
-    return data.guilds[guildId];
-}
-
-// index.js tarafından kullanılan isim
-function loadGuild(guildId) {
-    return getGuild(guildId);
-}
-
-// Sunucu verisini güncelle
-function updateGuild(guildId, patch) {
-    const data = read();
-
-    if (!data.guilds) {
-        data.guilds = {};
-    }
-
-    if (!data.guilds[guildId]) {
-        data.guilds[guildId] = {
-            welcomeChannelId: null,
-            logChannelId: null,
-            warnings: {}
-        };
-    }
-
-    data.guilds[guildId] = {
-        ...data.guilds[guildId],
-        ...patch
+    data.weekly[weekKey][guildId][userId] ??= {
+        chat_messages: 0,
+        voice_seconds: 0
     };
 
-    write(data);
-
-    return data.guilds[guildId];
+    return data.weekly[weekKey][guildId][userId];
 }
 
-// Uyarı ekle
-function addWarning(guildId, userId, warning) {
-    const data = read();
+function addChatMessages(
+    weekKey,
+    guildId,
+    userId,
+    amount = 1
+) {
+    const data = readData();
 
-    if (!data.guilds) {
-        data.guilds = {};
-    }
+    const user = ensureUser(
+        data,
+        weekKey,
+        guildId,
+        userId
+    );
 
-    if (!data.guilds[guildId]) {
-        data.guilds[guildId] = {
-            welcomeChannelId: null,
-            logChannelId: null,
-            warnings: {}
-        };
-    }
+    user.chat_messages += Number(amount) || 0;
 
-    const guild = data.guilds[guildId];
+    writeData(data);
 
-    if (!guild.warnings) {
-        guild.warnings = {};
-    }
-
-    if (!guild.warnings[userId]) {
-        guild.warnings[userId] = [];
-    }
-
-    guild.warnings[userId].push(warning);
-
-    write(data);
-
-    return guild.warnings[userId];
+    return user;
 }
 
-// Kullanıcının uyarılarını getir
-function getWarnings(guildId, userId) {
-    const guild = getGuild(guildId);
+function addVoiceSeconds(
+    weekKey,
+    guildId,
+    userId,
+    seconds
+) {
+    const data = readData();
 
-    if (!guild.warnings) {
-        return [];
+    const user = ensureUser(
+        data,
+        weekKey,
+        guildId,
+        userId
+    );
+
+    user.voice_seconds += Math.max(
+        0,
+        Math.floor(Number(seconds) || 0)
+    );
+
+    writeData(data);
+
+    return user;
+}
+
+function getWeekUsers(weekKey, guildId) {
+    const data = readData();
+
+    return data.weekly?.[weekKey]?.[guildId] || {};
+}
+
+function getUserStats(
+    weekKey,
+    guildId,
+    userId
+) {
+    const users = getWeekUsers(
+        weekKey,
+        guildId
+    );
+
+    return users[userId] || {
+        chat_messages: 0,
+        voice_seconds: 0
+    };
+}
+
+function getChatLeaderboard(
+    weekKey,
+    guildId,
+    limit = 3
+) {
+    const users = getWeekUsers(
+        weekKey,
+        guildId
+    );
+
+    return Object.entries(users)
+        .map(([userId, stats]) => ({
+            userId,
+            chat_messages:
+                Number(stats.chat_messages) || 0,
+            voice_seconds:
+                Number(stats.voice_seconds) || 0
+        }))
+        .sort((a, b) =>
+            b.chat_messages -
+            a.chat_messages
+        )
+        .slice(0, limit);
+}
+
+function getVoiceLeaderboard(
+    weekKey,
+    guildId,
+    limit = 3
+) {
+    const users = getWeekUsers(
+        weekKey,
+        guildId
+    );
+
+    return Object.entries(users)
+        .map(([userId, stats]) => ({
+            userId,
+            chat_messages:
+                Number(stats.chat_messages) || 0,
+            voice_seconds:
+                Number(stats.voice_seconds) || 0
+        }))
+        .sort((a, b) =>
+            b.voice_seconds -
+            a.voice_seconds
+        )
+        .slice(0, limit);
+}
+
+function getOverallLeaderboard(
+    weekKey,
+    guildId,
+    limit = 10
+) {
+    const users = getWeekUsers(
+        weekKey,
+        guildId
+    );
+
+    return Object.entries(users)
+        .map(([userId, stats]) => {
+            const chat =
+                Number(stats.chat_messages) || 0;
+
+            const voice =
+                Number(stats.voice_seconds) || 0;
+
+            return {
+                userId,
+                chat_messages: chat,
+                voice_seconds: voice,
+                score:
+                    chat +
+                    Math.floor(voice / 60)
+            };
+        })
+        .sort((a, b) =>
+            b.score - a.score
+        )
+        .slice(0, limit);
+}
+
+function archiveWeek(
+    weekKey,
+    guildId,
+    extra = {}
+) {
+    const data = readData();
+
+    data.archive[weekKey] ??= {};
+
+    data.archive[weekKey][guildId] = {
+        created_at:
+            new Date().toISOString(),
+
+        users:
+            getWeekUsers(
+                weekKey,
+                guildId
+            ),
+
+        ...extra
+    };
+
+    writeData(data);
+}
+
+function resetWeek(
+    weekKey,
+    guildId
+) {
+    const data = readData();
+
+    if (data.weekly[weekKey]) {
+        delete data.weekly[weekKey][guildId];
     }
 
-    return guild.warnings[userId] || [];
+    writeData(data);
 }
 
 module.exports = {
-    read,
-    write,
-    getGuild,
-    loadGuild,
-    updateGuild,
-    addWarning,
-    getWarnings
+    DATA_FILE,
+    readData,
+    writeData,
+    addChatMessages,
+    addVoiceSeconds,
+    getWeekUsers,
+    getUserStats,
+    getChatLeaderboard,
+    getVoiceLeaderboard,
+    getOverallLeaderboard,
+    archiveWeek,
+    resetWeek
 };
