@@ -1,66 +1,46 @@
-const { recordVoice } = require("../services/activityService");
 const config = require("../config");
+const {
+  startVoiceSession,
+  stopVoiceSession,
+  isVoiceSessionActive
+} = require("../services/activityService");
+const { currentWeek } = require("../services/activityService");
 
-const sessions = new Map();
-
-function isCountable(state) {
-  if (!state.channelId) return false;
-  if (state.channel?.isVoiceBased?.() === false) return false;
-
-  // AFK kanalını sayma.
-  if (state.channel?.id === state.guild.afkChannelId) return false;
-
-  // Server-deaf kullanıcı gerçek aktiflik göstermiyor kabul edilir.
-  if (state.serverDeaf) return false;
-
-  // Kanalda en az N insan olmalı.
-  const humans = state.channel.members.filter(member => !member.user.bot).size;
-  if (humans < config.voiceMinHumans) return false;
-
+function isCountableMember(member) {
+  if (!member || member.user?.bot) return false;
+  const voice=member.voice;
+  if (!voice?.channelId || !voice.channel) return false;
+  if (voice.channel.id === member.guild.afkChannelId) return false;
+  if (voice.serverDeaf) return false;
   return true;
 }
 
-function start(state) {
-  if (!isCountable(state)) return;
+function channelHasEnoughHumans(channel) {
+  if (!channel) return false;
+  return channel.members.filter(m => !m.user.bot).size >= config.voiceMinHumans;
+}
 
-  const key = `${state.guild.id}:${state.id}`;
+function shouldCount(member) {
+  return isCountableMember(member) && channelHasEnoughHumans(member.voice.channel);
+}
 
-  if (!sessions.has(key)) {
-    sessions.set(key, {
-      guildId: state.guild.id,
-      userId: state.id,
-      startedAt: Date.now()
-    });
+function refreshChannel(channel) {
+  if (!channel?.members) return;
+  for (const member of channel.members.values()) {
+    if (member.user.bot) continue;
+    const active=isVoiceSessionActive(channel.guild.id,member.id);
+    const wanted=shouldCount(member);
+    if (wanted && !active) {
+      startVoiceSession({weekKey:currentWeek(),guildId:channel.guild.id,userId:member.id});
+    } else if (!wanted && active) {
+      stopVoiceSession(channel.guild.id,member.id);
+    }
   }
 }
 
-function stop(state) {
-  const key = `${state.guild.id}:${state.id}`;
-  const session = sessions.get(key);
-
-  if (!session) return;
-
-  const seconds = Math.floor((Date.now() - session.startedAt) / 1000);
-  recordVoice(session.userId, session.guildId, seconds);
-  sessions.delete(key);
-}
-
-module.exports = async function voiceStateUpdate(oldState, newState) {
-  const key = `${newState.guild.id}:${newState.id}`;
-
-  // Durum değiştiyse mevcut oturumu yeniden değerlendir.
-  const wasCounting = sessions.has(key);
-  const shouldCount = isCountable(newState);
-
-  if (wasCounting && !shouldCount) {
-    stop(newState);
-  } else if (!wasCounting && shouldCount) {
-    start(newState);
-  }
-
-  // Kanal değiştiyse eski oturumun zamanını kapat ve yenisini başlat.
-  if (oldState.channelId !== newState.channelId) {
-    if (wasCounting) stop(oldState);
-    if (shouldCount) start(newState);
-  }
+module.exports = async function voiceStateUpdate(oldState,newState) {
+  refreshChannel(oldState.channel);
+  refreshChannel(newState.channel);
 };
+
+module.exports.refreshChannel = refreshChannel;

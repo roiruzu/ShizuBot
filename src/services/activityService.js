@@ -11,9 +11,6 @@ function currentWeek(date = new Date()) {
 
 function recordChat(message) {
   if (!message?.guild || message.author?.bot) return false;
-  const content = String(message.content || "").trim();
-  if (content.length < 2) return false;
-
   const key = `${message.guild.id}:${message.author.id}`;
   const now = Date.now();
   const last = lastChat.get(key) || 0;

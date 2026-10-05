@@ -1,4 +1,3 @@
-const path = require("node:path");
 require("dotenv").config();
 
 const required = ["DISCORD_TOKEN", "GUILD_ID", "ACTIVITY_ROLE_ID"];
@@ -15,13 +14,6 @@ module.exports = {
   activityRoleId: process.env.ACTIVITY_ROLE_ID,
   timezone: process.env.TIMEZONE || "Europe/Istanbul",
   announcementChannelId: process.env.ANNOUNCEMENT_CHANNEL_ID || null,
-  chatCooldownSeconds: Math.max(
-    0,
-    Number(process.env.CHAT_COOLDOWN_SECONDS || 10)
-  ),
-  voiceMinHumans: Math.max(
-    1,
-    Number(process.env.VOICE_MIN_HUMANS || 2)
-  ),
-  databasePath: path.join(process.cwd(), "data", "activity.db")
+  chatCooldownSeconds: Math.max(0, Number(process.env.CHAT_COOLDOWN_SECONDS || 10)),
+  voiceMinHumans: Math.max(1, Number(process.env.VOICE_MIN_HUMANS || 2))
 };

@@ -195,19 +195,6 @@ async function handleMessageXP(message) {
             return;
         }
 
-        const content =
-            String(
-                message.content || ""
-            )
-                .trim();
-
-        if (
-            !content ||
-            content.length < 2
-        ) {
-            return;
-        }
-
         const guildId =
             message.guild.id;
 
