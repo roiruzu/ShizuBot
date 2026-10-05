@@ -1,21 +1,60 @@
-const db = require("../database");
-const config = require("../config");
-const { currentWeek } = require("./activityService");
+const db = require('../database');
 
-function getLeaderboard(guildId, type = "all", limit = 10) {
-  return db.getTop(currentWeek(), guildId, type, limit);
+function getLeaderboard(weekKey, guildId, type = 'all', limit = 10) {
+    if (type === 'chat') {
+        return db.getChatLeaderboard(weekKey, guildId, limit);
+    }
+
+    if (type === 'voice') {
+        return db.getVoiceLeaderboard(weekKey, guildId, limit);
+    }
+
+    return db.getOverallLeaderboard(weekKey, guildId, limit);
 }
 
-function getTopThree(guildId, type) {
-  return getLeaderboard(guildId, type, 3);
+function getUserStats(weekKey, guildId, userId) {
+    return db.getUserStats(weekKey, guildId, userId);
 }
 
-function activityScore(row) {
-  return row.chat_messages + Math.floor(row.voice_seconds / 60);
+function getChatLeaderboard(weekKey, guildId, limit = 3) {
+    return db.getChatLeaderboard(weekKey, guildId, limit);
+}
+
+function getVoiceLeaderboard(weekKey, guildId, limit = 3) {
+    return db.getVoiceLeaderboard(weekKey, guildId, limit);
+}
+
+function getOverallLeaderboard(weekKey, guildId, limit = 10) {
+    return db.getOverallLeaderboard(weekKey, guildId, limit);
+}
+
+function getTopWinners(weekKey, guildId, limit = 3) {
+    const chat = getChatLeaderboard(weekKey, guildId, limit);
+    const voice = getVoiceLeaderboard(weekKey, guildId, limit);
+
+    return {
+        chat,
+        voice,
+        userIds: [
+            ...new Set([
+                ...chat.map(x => x.userId),
+                ...voice.map(x => x.userId)
+            ])
+        ]
+    };
 }
 
 module.exports = {
-  getLeaderboard,
-  getTopThree,
-  activityScore
+    getLeaderboard,
+    getUserStats,
+    getChatLeaderboard,
+    getVoiceLeaderboard,
+    getOverallLeaderboard,
+    getTopWinners,
+
+    // Eski isimlerle çağıran dosyalar için uyumluluk
+    getChatTop: getChatLeaderboard,
+    getVoiceTop: getVoiceLeaderboard,
+    getOverallTop: getOverallLeaderboard,
+    getStats: getUserStats
 };
