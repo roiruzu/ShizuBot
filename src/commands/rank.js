@@ -892,7 +892,17 @@ const data =
     new SlashCommandBuilder()
         .setName("rank")
         .setDescription(
-            "Shizu XP rank kartını gösterir."
+            "XP rank kartını veya haftalık yazılı/sesli sıralamanı gösterir."
+        )
+        .addStringOption(option =>
+            option
+                .setName("kategori")
+                .setDescription("Haftalık aktivite sıralaması (boş bırakılırsa XP kartı)")
+                .setRequired(false)
+                .addChoices(
+                    { name: "📝 Yazılı Aktif", value: "chat" },
+                    { name: "🎙️ Sesli Aktif", value: "voice" }
+                )
         )
         .addUserOption(
             option =>
@@ -925,6 +935,42 @@ async function execute(
         }
 
         await interaction.deferReply();
+
+        const activityType = interaction.options.getString("kategori");
+        if (activityType === "chat" || activityType === "voice") {
+            const db = require("../database");
+            const { currentWeek } = require("../services/activityService");
+            const typeLabel = activityType === "voice" ? "Sesli" : "Yazılı";
+            const targetUser = interaction.options.getUser("user") || interaction.user;
+            const rows = activityType === "voice"
+                ? db.getVoiceLeaderboard(currentWeek(), interaction.guild.id, Number.MAX_SAFE_INTEGER)
+                : db.getChatLeaderboard(currentWeek(), interaction.guild.id, Number.MAX_SAFE_INTEGER);
+            const filtered = [];
+            for (const row of rows) {
+                try {
+                    const member = await interaction.guild.members.fetch(row.userId);
+                    if (!member.user.bot) filtered.push(row);
+                } catch {}
+            }
+            const index = filtered.findIndex(row => row.userId === targetUser.id);
+            const mine = index >= 0 ? filtered[index] : { chat_messages: 0, voice_seconds: 0 };
+            const leader = filtered[0];
+            let distance = "Bu hafta henüz aktivite verisi yok.";
+            if (leader && leader.userId === targetUser.id) distance = "👑 **Zirvedesin! Liderliği koru.**";
+            else if (leader) {
+                const gap = activityType === "voice"
+                    ? Math.max(0, Number(leader.voice_seconds || 0) - Number(mine.voice_seconds || 0))
+                    : Math.max(0, Number(leader.chat_messages || 0) - Number(mine.chat_messages || 0));
+                distance = activityType === "voice"
+                    ? `Lidere kalan fark: **${Math.floor(gap / 3600)}sa ${Math.floor((gap % 3600) / 60)}dk**`
+                    : `Lidere kalan fark: **${gap.toLocaleString("tr-TR")} mesaj**`;
+            }
+            const stat = activityType === "voice"
+                ? `🎙️ Ses süresi: **${Math.floor(Number(mine.voice_seconds || 0) / 3600)}sa ${Math.floor((Number(mine.voice_seconds || 0) % 3600) / 60)}dk**`
+                : `📝 Mesaj sayısı: **${Number(mine.chat_messages || 0).toLocaleString("tr-TR")}**`;
+            await interaction.editReply(`🌙 **SHIZU | Haftalık ${typeLabel} Rank**\n**Kullanıcı:** <@${targetUser.id}>\n**Sıralama:** ${index >= 0 ? `#${index + 1}` : "Henüz sıralamada değil"}\n${stat}\n${distance}`);
+            return;
+        }
 
         // ====================================================
         // TARGET

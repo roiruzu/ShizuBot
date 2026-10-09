@@ -1,19 +1,27 @@
-⚔️ **SHIZU HAFTALIK AKTİVİTE SAVAŞI**
+⚔️ **SHIZU — HAFTALIK AKTİVİTE SAVAŞI**
 
-> **"Yolumu kaybetmiş olabilirim ama zirveye giden yolu asla unutmam. En güçlü olmak istiyorsan kılıcını çek ve sınırlarını zorla!"**
-> — *Roronoa Zoro*
+> **“Hiç kimse en baştan beri göklerde durmadı. Ne sen, ne ben... Ancak göklerdeki o boş tahtın yokluğu sona eriyor. Bundan böyle, o tahtta ben oturacağım.”**
+> — *Sosuke Aizen*
 
-🟢 **YAZILI SOHBET AKTİFLİĞİ — CHAT SAVAŞI**
-• Metin kanallarında aktif olarak sohbet et ve haftalık sıralamaya gir.
-• Haftayı genel chatte en çok mesajla **ilk 3** içinde bitiren üyeler `1556678194399289356` rolünü kazanır.
+👑 **YAZILI SOHBET AKTİFLİĞİ — CHAT SAVAŞI**
+• Metin kanallarında doğal ve anlamlı mesajlarla aktif ol; haftalık yazılı sıralamada ilk 10'a gir.
+• Haftayı ilk 3 içinde bitiren üyeler **Yazılı Aktif** rolünü kazanır: `1554922082146721812`.
 
-🗡️ **SESLİ KANAL AKTİFLİĞİ — VOICE SAVAŞI**
-• Sesli kanallarda vakit geçir, sohbet et ve aktiflik süreni artır.
-• Seste en çok zaman geçiren **ilk 3** üyeye `1556678194399289356` rolü verilir.
+🎙️ **SESLİ KANAL AKTİFLİĞİ — VOICE SAVAŞI**
+• Sesli kanallarda vakit geçir; haftalık ses sıralamasında ilk 10'a gir.
+• Haftayı ilk 3 içinde bitiren üyeler **Sesli Aktif** rolünü kazanır: `1554922275172778065`.
 
-📜 **SIFIRLANMA**
-• Haftalık sıralama her **Pazar 23:59**'da sıfırlanır.
-• Sıralamanı `/top` veya `!leaderboard` ile kontrol edebilirsin.
+📜 **SIRALAMA KOMUTLARI**
+• `/top kategori:Yazılı Aktif` veya `/top kategori:Sesli Aktif` — ilk 10'u gör.
+• `!leaderboard chat` veya `!leaderboard voice` — mesajla sıralamayı gör.
+• `/rank kategori:Yazılı Aktif` veya `/rank kategori:Sesli Aktif` — kendi sıranı ve liderle arandaki farkı gör.
+• `!rank chat` veya `!rank voice` — aynı bilgiyi metin olarak gör.
+• `/rank` — mevcut XP rank kartını gösterir.
 
-📌 **UYARI**
-Sahte aktiflik, AFK kalma ve anlamsız spam tespiti halinde haftalık puanların silinebilir.
+📅 **SIFIRLANMA VE ÖDÜLLER**
+• Haftalık sıralamalar **Pazar 23:59 (Europe/Istanbul)** itibarıyla arşivlenir ve sıfırlanır.
+• Yazılı ve sesli kategorilerin ilk 3 üyesine ilgili kategori rolü verilir; önceki haftanın o kategori rolü kazanan olmayan üyelerden kaldırılır.
+• Haftalık kazanan duyurusu için `.env` içindeki `ANNOUNCEMENT_CHANNEL_ID` değerini doldur.
+
+📌 **ADİL OYUN**
+Sahte XP kasmak, AFK kalmak veya anlamsız mesaj spamlamak yasaktır. Spam/AFK tespiti için moderasyon kontrolü yapılabilir; otomatik sistem her tür hileyi kesin olarak tespit ettiğini garanti etmez.

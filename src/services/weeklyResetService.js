@@ -7,7 +7,7 @@ const { currentWeek, endAllVoiceSessions } = require("./activityService");
 
 let lastResetKey = null;
 
-async function giveCategoryRole(guild, roleId, winnerId, label) {
+async function giveCategoryRole(guild, roleId, winnerIds, label) {
   const role = guild.roles.cache.get(roleId);
   if (!role) {
     console.warn(`[ROLE] ${label} rolü bulunamadı: ${roleId}`);
@@ -18,10 +18,11 @@ async function giveCategoryRole(guild, roleId, winnerId, label) {
     return false;
   }
 
+  const winners = new Set((Array.isArray(winnerIds) ? winnerIds : winnerIds ? [winnerIds] : []).filter(Boolean));
   await guild.members.fetch().catch(() => {});
   for (const member of guild.members.cache.values()) {
     if (member.user.bot) continue;
-    const shouldHave = Boolean(winnerId && member.id === winnerId);
+    const shouldHave = winners.has(member.id);
     const has = member.roles.cache.has(role.id);
     try {
       if (shouldHave && !has) {
@@ -50,15 +51,18 @@ async function resetWeek(guild, oldWeek = currentWeek()) {
 
   const chatWinners = getTopThree(guild.id, "chat");
   const voiceWinners = getTopThree(guild.id, "voice");
-  const chatWinnerId = chatWinners[0]?.userId || null;
-  const voiceWinnerId = voiceWinners[0]?.userId || null;
+  const chatWinnerIds = chatWinners.map(row => row.userId).slice(0, 3);
+  const voiceWinnerIds = voiceWinners.map(row => row.userId).slice(0, 3);
+  const chatWinnerId = chatWinnerIds[0] || null;
+  const voiceWinnerId = voiceWinnerIds[0] || null;
 
-  await giveCategoryRole(guild, config.chatActivityRoleId, chatWinnerId, "yazılı aktif");
-  await giveCategoryRole(guild, config.voiceActivityRoleId, voiceWinnerId, "sesli aktif");
+  // İlk 3 üyeye kategori rolünü verir; bu kategori rolünü önceki kazananlardan kaldırır.
+  await giveCategoryRole(guild, config.chatActivityRoleId, chatWinnerIds, "yazılı aktif");
+  await giveCategoryRole(guild, config.voiceActivityRoleId, voiceWinnerIds, "sesli aktif");
 
   db.archiveWeek(oldWeek, guild.id, {
-    chatWinners: chatWinners.map(x => x.userId),
-    voiceWinners: voiceWinners.map(x => x.userId),
+    chatWinners: chatWinnerIds,
+    voiceWinners: voiceWinnerIds,
     chatWinnerId,
     voiceWinnerId
   });
@@ -72,9 +76,9 @@ async function resetWeek(guild, oldWeek = currentWeek()) {
         .setColor(0xa855f7)
         .setTitle("🌙 SHIZU — Haftalık Aktifler")
         .setDescription(
-          `📝 **Haftanın Yazılı Aktifi**\n${chatWinners[0] ? `<@${chatWinners[0].userId}> — **${chatWinners[0].chat_messages} mesaj**` : "Bu hafta veri yok."}` +
-          `\n\n🎙️ **Haftanın Sesli Aktifi**\n${voiceWinners[0] ? `<@${voiceWinners[0].userId}> — **${Math.floor(voiceWinners[0].voice_seconds / 3600)}sa ${Math.floor((voiceWinners[0].voice_seconds % 3600) / 60)}dk**` : "Bu hafta veri yok."}` +
-          "\n\nYeni hafta başladı. Zirve için savaşmaya devam!"
+          `📝 **Yazılı Sohbet — İlk 3**\n${chatWinners.length ? chatWinners.slice(0, 3).map((row, i) => `${["🥇","🥈","🥉"][i]} <@${row.userId}> — **${row.chat_messages} mesaj**`).join("\n") : "Bu hafta veri yok."}` +
+          `\n\n🎙️ **Sesli Kanal — İlk 3**\n${voiceWinners.length ? voiceWinners.slice(0, 3).map((row, i) => `${["🥇","🥈","🥉"][i]} <@${row.userId}> — **${Math.floor(row.voice_seconds / 3600)}sa ${Math.floor((row.voice_seconds % 3600) / 60)}dk**`).join("\n") : "Bu hafta veri yok."}` +
+          "\n\nİlk 3 üyeye ilgili kategori rolü verildi. Yeni hafta başladı!"
         )
         .setTimestamp();
       await channel.send({ embeds: [embed] }).catch(() => {});

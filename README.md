@@ -1,37 +1,38 @@
 # SHIZU Discord Bot
 
+Discord.js v14 tabanlı Shizu botu. Haftalık yazılı ve sesli aktivite sıralamaları ayrı tutulur.
+
+## Haftalık aktivite komutları
+
+- `/top` — haftalık yazılı ilk 10'u gösterir.
+- `/top kategori:Yazılı Aktif` — haftalık yazılı ilk 10.
+- `/top kategori:Sesli Aktif` — haftalık sesli ilk 10.
+- `!leaderboard chat` / `!leaderboard voice` — aynı sıralamaların metin sürümü.
+- `/rank` — mevcut XP rank kartı.
+- `/rank kategori:Yazılı Aktif` / `/rank kategori:Sesli Aktif` — seçilen aktivite kategorisinde kullanıcının sırası ve birinciyle arasındaki fark.
+- `!rank chat` / `!rank voice` — haftalık kişisel sıralama metni.
+- `/testreward kategori:Yazılı Aktif` / `/testreward kategori:Sesli Aktif` — yalnızca Administrator yetkisiyle ilgili kategorinin mevcut birincisine rol vermeyi test eder; haftayı sıfırlamaz.
+
+## Haftalık ödüller
+
+Pazar günü 23:59'da `Europe/Istanbul` saat dilimine göre:
+- Yazılı sıralamada ilk 3 üyeye `CHAT_ACTIVITY_ROLE_ID` rolü verilir.
+- Sesli sıralamada ilk 3 üyeye `VOICE_ACTIVITY_ROLE_ID` rolü verilir.
+- Her kategorideki ilgili rol, önceki kazanan olmayan üyelerden kaldırılır.
+- Duyuru için `ANNOUNCEMENT_CHANNEL_ID` isteğe bağlıdır.
+
+Varsayılan rol kimlikleri `.env.example` içinde bulunur:
+- Yazılı: `1554922082146721812`
+- Sesli: `1554922275172778065`
+
 ## Kurulum
-1. Node.js 20+ (önerilen 22) kullan.
+
+1. Node.js 20 veya üstünü kullan.
 2. `.env.example` dosyasını `.env` olarak kopyala.
-3. `.env` içine gerçek `DISCORD_TOKEN`, `GUILD_ID` ve `VOICE_ACTIVITY_ROLE_ID / CHAT_ACTIVITY_ROLE_ID` yaz.
-4. `npm install`
-5. `npm start`
+3. `DISCORD_TOKEN` ve `GUILD_ID` değerlerini doldur.
+4. `npm install` çalıştır.
+5. Discord Developer Portal → Bot bölümünde **Message Content Intent** ve **Server Members Intent** izinlerini aç.
+6. Botun sunucuda **Rolleri Yönet** izni olmalı ve botun en yüksek rolü iki aktivite rolünün üstünde bulunmalı.
+7. `npm start` çalıştır.
 
-## Discord Developer Portal
-**Bot > Privileged Gateway Intents** bölümünde şunları aç:
-- Message Content Intent
-- Server Members Intent
-
-Botu sunucuya davet ederken gerekli slash command kapsamı (`applications.commands`) ve bot kapsamı açık olmalı.
-
-## SHIZU komutları
-- `/rank` — XP/rank kartı
-- `/top` — haftalık aktivite sıralaması
-- `/ping`
-- `/serverinfo`
-- `/userinfo`
-- `/warn`, `/warnings`, `/clearwarning`, `/unwarn`
-- `/ban`, `/kick`, `/timeout`, `/clear`
-- `/setlevel`, `/setlog`, `/setwelcome`
-- `/ticket`
-- `/rpg`, `/rpgadmin`
-
-## Aktivite sistemi
-- Yazılı mesajlar haftalık aktiviteye kaydedilir.
-- Ses aktivitesi, kanalda en az `VOICE_MIN_HUMANS` kişi varsa sayılır.
-- `/top` verileri `data/activity.json` içinde tutulur.
-- `/rank` verileri `data/levels.json` içinde tutulur.
-- `better-sqlite3` kullanılmaz.
-
-## Önemli
-Bot rolünü ödül rolünün (`VOICE_ACTIVITY_ROLE_ID / CHAT_ACTIVITY_ROLE_ID`) üstüne taşı ve botun rol yönetme yetkisi olduğundan emin ol.
+`.env`, `node_modules`, Git geçmişi ve canlı aktivite/veritabanı dosyaları bu dağıtım arşivine dahil edilmez. Mevcut `.env` dosyanı ayrıca sakla; tokenı GitHub'a yükleme.

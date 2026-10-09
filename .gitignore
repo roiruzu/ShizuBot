@@ -4,3 +4,7 @@ data/activity.db
 data/activity.db-shm
 data/activity.db-wal
 npm-debug.log*
+.env.*
+!.env.example
+data/activity.json
+*.log
