@@ -25,6 +25,16 @@ Varsayılan rol kimlikleri `.env.example` içinde bulunur:
 - Yazılı: `1554922082146721812`
 - Sesli: `1554922275172778065`
 
+## Yetkili başvuru ticket sistemi
+
+- Panel kanalı: `1556679317914910860`
+- Sunucuda `/ticket setup support_role:@Yetkili category:#Ticket-Kategorisi` komutunu **Sunucuyu Yönet** yetkisi olan biri çalıştırmalı. Kategori seçeneği boş bırakılırsa bot `🎫・TICKETS` kategorisini oluşturur.
+- Paneldeki **Başvuru Yap** butonu beş soruluk başvuru formunu açar.
+- Form gönderilince başvuru sahibi ve destek rolünün görebildiği özel bir `basvuru-...` kanalı açılır; başvuru cevapları kanala embed olarak gönderilir.
+- Yetkililer **Başvuruyu Kabul Et** veya **Başvuruyu Reddet** butonlarıyla karar verebilir; başvuru sahibine DM gönderilmeye çalışılır. **Başvuruyu Kapat** kanalı kapatır.
+- Aynı kullanıcı aynı anda yalnızca bir açık ticket/başvuru açabilir.
+- Botta `Kanalları Yönet`, `Kanalları Gör`, `Mesaj Gönder` ve `Bağlantıları Göm` izinleri bulunmalı; başvuru ekibinin rolü botun rol sırasından bağımsız olarak kanalları görebilecek şekilde ayarlanmalıdır.
+
 ## Kurulum
 
 1. Node.js 20 veya üstünü kullan.

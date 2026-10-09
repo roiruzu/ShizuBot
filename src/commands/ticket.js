@@ -16,7 +16,7 @@ const logger = require("../utils/logger");
 // TICKET PANEL KANALI
 // ============================================================
 
-const TICKET_PANEL_CHANNEL_ID = "1555239251292065822";
+const TICKET_PANEL_CHANNEL_ID = "1556679317914910860";
 
 
 // ============================================================
@@ -329,25 +329,23 @@ module.exports = {
                 .setColor(0x5865F2)
 
                 .setTitle(
-                    "🎫 Shizu Destek Sistemi"
+                    "🛡️ Shizu Yetkili Başvuruları"
                 )
 
                 .setDescription(
-                    "Destek almak için aşağıdaki **Ticket Aç** butonuna basarak destek talebi oluşturabilirsin.\n\n" +
-
-                    "📌 **Ticket Kuralları**\n" +
-                    "• Aynı anda yalnızca bir ticket açabilirsin.\n" +
-                    "• Sorununu mümkün olduğunca detaylı anlat.\n" +
-                    "• Gereksiz ticket açma.\n" +
-                    "• Yetkililere saygılı davran.\n" +
-                    "• Ticket içerisinde gerekli bilgileri paylaş."
+                    "Shizu yetkili ekibine katılmak istiyorsan aşağıdaki **Başvuru Yap** butonuna bas.\n" +
+                    "Açılan başvuru formunu eksiksiz doldur. Başvurun özel bir kanala iletilecek ve yetkili ekibi tarafından incelenecek.\n\n" +
+                    "📌 **Başvuru Bilgisi**\n" +
+                    "• Her kullanıcı aynı anda yalnızca bir açık başvuru oluşturabilir.\n" +
+                    "• Verdiğin bilgileri doğru ve anlaşılır yaz.\n" +
+                    "• Başvurun incelenene kadar beklemen gerekir."
                 )
 
                 .addFields(
                     {
-                        name: "🎫 Ticket Aç",
+                        name: "📝 Yetkili Başvurusu",
                         value:
-                            "Aşağıdaki butona basarak yeni bir destek talebi oluştur.",
+                            "Formu açmak ve başvurunu göndermek için aşağıdaki butona bas.",
                         inline: false
                     },
 
@@ -367,7 +365,7 @@ module.exports = {
                 )
 
                 .setFooter({
-                    text: "Shizu Ticket System"
+                    text: "Shizu Staff Applications"
                 })
 
                 .setTimestamp();
@@ -388,7 +386,7 @@ module.exports = {
                         )
 
                         .setLabel(
-                            "Ticket Aç"
+                            "Başvuru Yap"
                         )
 
                         .setEmoji(
